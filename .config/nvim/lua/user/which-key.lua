@@ -83,7 +83,7 @@ local mappings = {
   ["e"] = { "<cmd>NvimTreeToggle<cr>", "Explorer" },
   ["c"] = { "<cmd>bdelete!<CR>", "Close Buffer" },
   ["f"] = {
-    "<cmd>Telescope find_files<cr>",
+    "<cmd>Telescope find_files hidden=true<cr>",
     "Find files",
   },
   ["F"] = { "<cmd>Telescope live_grep theme=ivy<cr>", "Find Text" },
