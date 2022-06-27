@@ -1,13 +1,17 @@
 # Use neovim
 export EDITOR="nvim"
-export GEM_HOME="$HOME/.gem"
+# add custom scripts to path
+export PATH="$HOME/.local/bin:$PATH"
+
 # vim golf stuff. maybe not necessary
 export PATH="/usr/local/opt/ruby/bin:$PATH"
 export PATH="/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/3.1.0/bin:$PATH"
+
+# TODO: use of `~` might not be working here. could this be why taskwiki isn't working?
 export PATH="~/.gem/gems:$PATH"
 export PATH="~/.gem/ruby/2.6.0:$PATH"
 export PATH="~/.gem/ruby/2.6.0/cache:$PATH"
-
+export PATH="~/.gem/ruby/2.6.0/cache:$PATH"
 export PATH="~/src/tasklib:$PATH"
 
 if which ruby >/dev/null && which gem >/dev/null; then
@@ -98,7 +102,7 @@ preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 alias v="nvim"
 
 #tmux alias for project startup
-alias t="./.tmux"
+#alias t="./.tmux"
 
 # zsh-autosuggestions
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
@@ -110,4 +114,4 @@ source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 export PATH="/usr/local/opt/ruby/bin:$PATH"
 export PATH="/usr/local/opt/ruby/bin:$PATH"
 export PATH="/usr/local/opt/ruby/bin:$PATH"
-r
+
