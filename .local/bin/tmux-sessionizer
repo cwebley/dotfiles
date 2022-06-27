@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
 if [[ $# -eq 1 ]]; then
-    selected=$1
+    # Support simply passing the current working directory or a specified path
+    selected="$1" && [[ "$selected" == '.' ]] && selected="$PWD"
 else
     selected=$(find ~ ~/src -mindepth 1 -maxdepth 1 -type d | fzf)
 fi
@@ -13,13 +14,23 @@ fi
 selected_name=$(basename "$selected" | tr . _)
 tmux_running=$(pgrep tmux)
 
+# handle tmux not running
 if [[ -z $TMUX ]] && [[ -z $tmux_running ]]; then
     tmux new-session -s $selected_name -c $selected
     exit 0
 fi
 
+# handle outside of tmux but tmux IS running
+if [[ -z $TMUX ]]; then
+    tmux new-session -s $selected_name -c $selected \
+    || tmux attach -t $selected_name
+    exit 0
+fi
+
+# handle tmux is running and the session doesn't yet exist
 if ! tmux has-session -t=$selected_name 2> /dev/null; then
     tmux new-session -ds $selected_name -c $selected
 fi
 
+# handle tmux is running and the session doesn't exist
 tmux switch-client -t $selected_name
