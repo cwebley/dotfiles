@@ -76,6 +76,7 @@ keymap("x", "K", ":move '<-2<CR>gv-gv", opts)
 keymap("x", "<A-j>", ":move '>+1<CR>gv-gv", opts)
 keymap("x", "<a-k>", ":move '<-2<cr>gv-gv", opts)
 
+keymap("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<cr>", opts)
 -- Terminal --
 -- Better terminal navigation
 -- keymap("t", "<C-h>", "<C-\\><C-N><C-w>h", term_opts)
