@@ -116,7 +116,8 @@ end
 local util = require 'vim.lsp.util'
 local formatting_callback = function(client, bufnr)
   -- TODO add this to whichkey
-  vim.keymap.set('n', '<leader>F', function()
+  -- TODO this doesn't actually work for ts files. we want null-ls to format, not tsserver
+  vim.keymap.set('n', '<leader>L', function()
     local params = util.make_formatting_params({})
     client.request('textDocument/formatting', params, nil, bufnr)
   end, { buffer = bufnr })

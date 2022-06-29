@@ -90,7 +90,7 @@ local mappings = {
   ["x"] = { "<cmd> !chmod +x %<cr>", "chmod x this" },
   -- ["P"] = { "<cmd>lua require('telescope').extensions.projects.projects()<cr>", "Projects" },
 
-  p = {
+  i = {
     name = "Packer",
     c = { "<cmd>PackerCompile<cr>", "Compile" },
     i = { "<cmd>PackerInstall<cr>", "Install" },

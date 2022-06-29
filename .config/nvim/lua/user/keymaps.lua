@@ -40,7 +40,7 @@ keymap("n", "<S-h>", ":bprevious<CR>", opts)
 --   noremap = true, -- use `noremap` when creating keymaps
 --   nowait = false, -- use `nowait` when creating keymaps
 -- }
--- 
+--
 -- local mappings = {
 --   ["h"] = { "<C-w>h", "Change Focus Left" },
 --   ["j"] = { "<C-w>j", "Change Focus Down" },

@@ -11,6 +11,7 @@ telescope.setup {
     prompt_prefix = " ",
     selection_caret = " ",
     path_display = { "smart" },
+    hidden = true,
 
     mappings = {
       -- insert mode
@@ -81,6 +82,11 @@ telescope.setup {
   },
   pickers = {
     -- Default configuration for builtin pickers goes here:
+      live_grep = {
+          additional_args = function(opts)
+              return {"--hidden"}
+          end
+      },
     -- picker_name = {
     --   picker_config_key = value,
     --   ...
