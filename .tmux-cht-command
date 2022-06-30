@@ -35,3 +35,7 @@ stow
 chmod
 chown
 make
+diff
+test
+cmp
+ln

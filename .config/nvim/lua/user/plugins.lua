@@ -90,20 +90,20 @@ return packer.startup(function(use)
       -- remove default key binding of `s`
       vim.g.sandwich_no_default_key_mappings = 1
 
-      -- Use t instead of s
+      -- Use m instead of s
       vim.cmd([[
-       silent! nmap <unique><silent> td <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
-       silent! nmap <unique><silent> td <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
-       silent! nmap <unique><silent> tr <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
-       silent! nmap <unique><silent> tdb <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
-       silent! nmap <unique><silent> trb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
+       silent! nmap <unique><silent> md <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
+       silent! nmap <unique><silent> md <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
+       silent! nmap <unique><silent> mr <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)
+       silent! nmap <unique><silent> mdb <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
+       silent! nmap <unique><silent> mrb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)
        let g:operator_sandwich_no_default_key_mappings = 1
        " add
-       silent! map <unique> ta <Plug>(operator-sandwich-add)
+       silent! map <unique> ma <Plug>(operator-sandwich-add)
        " delete
-       silent! xmap <unique> td <Plug>(operator-sandwich-delete)
+       silent! xmap <unique> md <Plug>(operator-sandwich-delete)
        " replace
-       silent! xmap <unique> tr <Plug>(operator-sandwich-replace)
+       silent! xmap <unique> mr <Plug>(operator-sandwich-replace)
       ]])
     end
   }
@@ -150,7 +150,7 @@ return packer.startup(function(use)
   -- Git
   use "lewis6991/gitsigns.nvim"
 
-  -- Automatically set up your configuration after cloning packer.nvim
+  -- automatically set up your configuration after cloning packer.nvim
   -- Put this at the end after all plugins
   if PACKER_BOOTSTRAP then
     require("packer").sync()
