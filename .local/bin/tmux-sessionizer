@@ -4,14 +4,38 @@ if [[ $# -eq 1 ]]; then
     # Support simply passing the current working directory or a specified path
     selected="$1" && [[ "$selected" == '.' ]] && selected="$PWD"
 else
-    selected=$(find ~ ~/src -mindepth 1 -maxdepth 1 -type d | fzf)
+    selected=$(find ~ ~/src ~/src/*/worktrees -mindepth 1 -maxdepth 1 -type d | fzf)
 fi
 
 if [[ -z $selected ]]; then
     exit 0
 fi
 
-selected_name=$(basename "$selected" | tr . _)
+
+is_bare_repo_worktree=false
+
+# check if the selected dir contains a dir called worktrees
+if [[ $selected == */worktrees/* ]]; then
+  is_bare_repo_worktree=true
+  # set the selected dir to reference where the code lives--back one directory
+  selected=$(echo $selected | awk -F '/worktrees' '{print $1 $NF}')
+  echo "SELECTED: $selected" 
+
+
+
+
+  # this works too
+  # echo $selected | awk 'BEGIN{FS="/worktrees/"; OFS="/"} {print $1, $NF}'
+fi
+
+selected_name=""
+# for a little more context, name sessions that are worktrees of bare repos
+# repo_name/worktree_name
+if $is_bare_repo_worktree ; then
+  selected_name+=$(echo $selected | awk -F '/' '{print $(NF-1)}' | tr . _)/
+fi
+selected_name+=$(basename "$selected" | tr . _)
+
 tmux_running=$(pgrep tmux)
 
 # handle tmux not running

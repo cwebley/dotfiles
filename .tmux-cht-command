@@ -39,3 +39,7 @@ diff
 test
 cmp
 ln
+cut
+uniq
+df
+basename
