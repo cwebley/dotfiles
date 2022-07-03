@@ -19,11 +19,6 @@ if [[ $selected == */worktrees/* ]]; then
   is_bare_repo_worktree=true
   # set the selected dir to reference where the code lives--back one directory
   selected=$(echo $selected | awk -F '/worktrees' '{print $1 $NF}')
-  echo "SELECTED: $selected" 
-
-
-
-
   # this works too
   # echo $selected | awk 'BEGIN{FS="/worktrees/"; OFS="/"} {print $1, $NF}'
 fi
