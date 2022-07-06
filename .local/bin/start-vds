@@ -2,10 +2,6 @@
 # start vds-angular from inside a tmux session
 
 echo "starting $PWD"
-search_term_lib_build="Compiled"
-# search_term_lib_build="Built Angular Package"
-# npm_script_command="npm run lib:watch"
-npm_script_command="npm start"
 
 start_vds_react() {
   # local log_file_path="$PWD/start-vds-react.log"
@@ -27,6 +23,8 @@ start_vds_react() {
 start_vds_angular() {
 
   local log_file_path="$PWD/start-vds-angular.log"
+  local search_term_lib_build="Built\ Angular\ Package"
+  local npm_script_command="npm run lib:watch"
   # make sure the log file exists, is empty, and has permissions
   rm $log_file_path
   touch $log_file_path
@@ -51,7 +49,7 @@ start_vds_angular() {
   # rm $log_file_path
 }
   
-if [[ $PWD == "*vds-angular*" ]]; then
+if [[ $PWD = *vds-angular* ]]; then
   echo "starting vds-angular"
   start_vds_angular
 else
