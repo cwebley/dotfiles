@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+# start vds-angular from inside a tmux session
+
+echo "starting $PWD"
+search_term_lib_build="Compiled"
+# search_term_lib_build="Built Angular Package"
+# npm_script_command="npm run lib:watch"
+npm_script_command="npm start"
+
+start_vds_react() {
+  # local log_file_path="$PWD/start-vds-react.log"
+  # make sure the log file exists, is empty, and has permissions
+  # rm $log_file_path
+  # touch $log_file_path
+  # chmod 777 $log_file_path
+  # echo "777'd the log file...."
+
+  session_name=$(tmux display-message -p '#S')
+  echo "session name: $session_name"
+
+  # start up the lib:build and duplicate the output to $log_file_path
+  tmux neww -d -t $session_name -n "npm-start"
+  tmux send-keys -t $session_name:npm-start "npm start 2>&1" Enter
+}
+
+# TODO sed to enableIvy to true
+start_vds_angular() {
+
+  local log_file_path="$PWD/start-vds-angular.log"
+  # make sure the log file exists, is empty, and has permissions
+  rm $log_file_path
+  touch $log_file_path
+  chmod 777 $log_file_path
+  echo "777'd the log file...."
+
+  session_name=$(tmux display-message -p '#S')
+
+  # start up the lib:build and duplicate the output to $log_file_path
+  tmux neww -d -t $session_name -n "lib-build"
+  # TODO sed to enableIvy here
+  tmux send-keys -t $session_name:lib-build "$npm_script_command 2>&1 | tee $log_file_path" Enter 
+
+  # watch $log_file_path for $search_term_lib_build
+  # tmux neww -t $session_name -n "wait-log-output" bash -c "wait-log-output $log_file_path $search_term_lib_build 10s && echo -n $search_term_lib_build found && while [ : ]; do sleep 1; done"
+  tmux neww -t $session_name -n "docs-serve" 
+  tmux send-keys -t $session_name:docs-serve "wait-log-output $log_file_path $search_term_lib_build 5m && echo -n $search_term_lib_build found && rm $log_file_path && npm run docs:serve" Enter
+  # tmux neww -t $session_name -n "wait-log-output" bash -c "wait-log-output $log_file_path $search_term_lib_build 5m && echo -n $search_term_lib_build found && while [ : ]; do sleep 1; done"
+
+  echo "bottom of start_window_npm_process"
+  # remove log file -> this needs to be done as part of the long tmux command
+  # rm $log_file_path
+}
+  
+if [[ $PWD == "*vds-angular*" ]]; then
+  echo "starting vds-angular"
+  start_vds_angular
+else
+  echo "starting vds-react"
+  start_vds_react
+fi
+

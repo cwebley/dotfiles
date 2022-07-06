@@ -1,0 +1,47 @@
+#!/usr/bin/env bash
+
+# $1: path to the log file
+# $2: search term to watch for in the log file
+# $3: time to give up watching the log file for the expected string
+
+# this script checks for the existence of a log file, 
+# then watches that file for a specfic search term.
+# Exits 0 when the search term is found
+# Exits 1 if the timeout triggers before the search term is found.
+
+# https://superuser.com/questions/270529/monitoring-a-file-until-a-string-is-found
+echo "Waiting for log output from $1"
+
+
+log_file_path="$1"; shift
+search_term="$1"; shift
+wait_time="$1"; shift
+
+wait_file() {
+  local file="$1"; shift
+  local wait_seconds="${1:-10}"; shift # 10 seconds as default timeout
+  echo "wait_seconds: $wait_seconds"
+  # this runs forever if $file doesnt exist
+  until "$file" $((wait_seconds--)) -eq 0 -o -f "$file" ; do sleep 1; done
+
+  echo "does this line ever fire?"
+  ((++wait_seconds))
+}
+
+wait_term() {
+  echo "wait str"
+  local file="$1"; shift
+  echo "Search Term $1"
+  local search_term="$1"; shift
+  local wait_time="${1:-5m}"; shift # 5 minutes as default Timeout
+
+  echo "looking for $search_term in $file: $PWD"
+  (timeout $wait_time tail -F "$file" &) | grep -q "$search_term" && return 0
+
+  echo "Timeout of $wait_time reached. Unable to find '$search_term' in '$file'"
+  return 1
+}
+
+wait_file "$log_file_path" 15 || { echo "Server log file missing: $log_file_path"; return 1; }
+wait_term "$log_file_path" "$search_term" "$wait_time"
+
