@@ -48,6 +48,8 @@ return packer.startup(function(use)
   use "kyazdani42/nvim-web-devicons"
   use "kyazdani42/nvim-tree.lua" -- TODO update when this PR merges https://github.com/kyazdani42/nvim-tree.lua/pull/1365
   use "ThePrimeagen/harpoon"
+  use "tpope/vim-fugitive"
+  use "tpope/vim-unimpaired"
   -- use "akinsho/bufferline.nvim"
   -- use "moll/vim-bbye"
   use "nvim-lualine/lualine.nvim"

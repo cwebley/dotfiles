@@ -214,6 +214,11 @@ _G.packer_plugins = {
     path = "/Users/cwebley/.local/share/nvim/site/pack/packer/start/toggleterm.nvim",
     url = "https://github.com/akinsho/toggleterm.nvim"
   },
+  ["vim-fugitive"] = {
+    loaded = true,
+    path = "/Users/cwebley/.local/share/nvim/site/pack/packer/start/vim-fugitive",
+    url = "https://github.com/tpope/vim-fugitive"
+  },
   ["vim-illuminate"] = {
     loaded = true,
     path = "/Users/cwebley/.local/share/nvim/site/pack/packer/start/vim-illuminate",
@@ -235,8 +240,13 @@ _G.packer_plugins = {
     path = "/Users/cwebley/.local/share/nvim/site/pack/packer/start/vim-table-mode",
     url = "https://github.com/dhruvasagar/vim-table-mode"
   },
+  ["vim-unimpaired"] = {
+    loaded = true,
+    path = "/Users/cwebley/.local/share/nvim/site/pack/packer/start/vim-unimpaired",
+    url = "https://github.com/tpope/vim-unimpaired"
+  },
   vimwiki = {
-    config = { "\27LJ\2\nd\0\0\3\0\4\0\a6\0\0\0009\0\1\0004\1\3\0005\2\3\0>\2\1\1=\1\2\0K\0\1\0\1\0\3\bext\b.md\vsyntax\rmarkdown\tpath\18~/src/vimwiki\17vimwiki_list\6g\bvim\0" },
+    config = { "\27LJ\2\nd\0\0\3\0\4\0\a6\0\0\0009\0\1\0004\1\3\0005\2\3\0>\2\1\1=\1\2\0K\0\1\0\1\0\3\vsyntax\rmarkdown\tpath\18~/src/vimwiki\bext\b.md\17vimwiki_list\6g\bvim\0" },
     loaded = true,
     path = "/Users/cwebley/.local/share/nvim/site/pack/packer/start/vimwiki",
     url = "https://github.com/vimwiki/vimwiki"
@@ -249,14 +259,14 @@ _G.packer_plugins = {
 }
 
 time([[Defining packer_plugins]], false)
--- Config for: vimwiki
-time([[Config for vimwiki]], true)
-try_loadstring("\27LJ\2\nd\0\0\3\0\4\0\a6\0\0\0009\0\1\0004\1\3\0005\2\3\0>\2\1\1=\1\2\0K\0\1\0\1\0\3\bext\b.md\vsyntax\rmarkdown\tpath\18~/src/vimwiki\17vimwiki_list\6g\bvim\0", "config", "vimwiki")
-time([[Config for vimwiki]], false)
 -- Config for: vim-sandwich
 time([[Config for vim-sandwich]], true)
 try_loadstring("\27LJ\2\nÙ\b\0\0\3\0\5\0\t6\0\0\0009\0\1\0)\1\1\0=\1\2\0006\0\0\0009\0\3\0'\2\4\0B\0\2\1K\0\1\0†\b       silent! nmap <unique><silent> md <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)\n       silent! nmap <unique><silent> md <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)\n       silent! nmap <unique><silent> mr <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-query-a)\n       silent! nmap <unique><silent> mdb <Plug>(operator-sandwich-delete)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)\n       silent! nmap <unique><silent> mrb <Plug>(operator-sandwich-replace)<Plug>(operator-sandwich-release-count)<Plug>(textobj-sandwich-auto-a)\n       let g:operator_sandwich_no_default_key_mappings = 1\n       \" add\n       silent! map <unique> ma <Plug>(operator-sandwich-add)\n       \" delete\n       silent! xmap <unique> md <Plug>(operator-sandwich-delete)\n       \" replace\n       silent! xmap <unique> mr <Plug>(operator-sandwich-replace)\n      \bcmd%sandwich_no_default_key_mappings\6g\bvim\0", "config", "vim-sandwich")
 time([[Config for vim-sandwich]], false)
+-- Config for: vimwiki
+time([[Config for vimwiki]], true)
+try_loadstring("\27LJ\2\nd\0\0\3\0\4\0\a6\0\0\0009\0\1\0004\1\3\0005\2\3\0>\2\1\1=\1\2\0K\0\1\0\1\0\3\vsyntax\rmarkdown\tpath\18~/src/vimwiki\bext\b.md\17vimwiki_list\6g\bvim\0", "config", "vimwiki")
+time([[Config for vimwiki]], false)
 if should_profile then save_profiles() end
 
 end)

@@ -3,3 +3,6 @@ export PATH="$HOME/.local/bin:$PATH"
 
 # run tmux-sessionizer script while outside of vim
 bindkey -s ^f "tmux-sessionizer\n"
+
+# run startup script--start limelight
+# startup.sh
