@@ -1,6 +1,9 @@
 # Use neovim
 export EDITOR="nvim"
 
+# this needs to precede /usr/local/bin if there is another node install there.
+# export PATH="$N_PREFIX/bin:$PATH"
+
 # vim golf stuff. maybe not necessary
 export PATH="/usr/local/opt/ruby/bin:$PATH"
 export PATH="/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/3.1.0/bin:$PATH"
