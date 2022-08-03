@@ -5,7 +5,7 @@ end
 
 local lspconfig = require("lspconfig")
 
-local servers = { "tsserver", "jsonls", "sumneko_lua", "dockerls", "marksman", "bashls", "yamlls" }
+local servers = { "tsserver", "jsonls", "sumneko_lua", "dockerls", "marksman", "bashls", "yamlls", "emmet_ls" }
 
 lsp_installer.setup {
 	ensure_installed = servers
