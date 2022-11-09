@@ -99,8 +99,8 @@ zle -N zle-line-init
 echo -ne '\e[5 q' # Use beam shape cursor on startup.
 preexec() { echo -ne '\e[5 q' ;} # Use beam shape cursor for each new prompt.
 
-#neovim
-alias v="nvim"
+# open lunarvim with v
+alias v="lvim"
 
 #tmux alias for project startup
 #alias t="./.tmux"
