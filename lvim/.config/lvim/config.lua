@@ -103,7 +103,7 @@ an executable
 -- }
 -- -- change UI setting of `LspInstallInfo`
 -- -- see <https://github.com/williamboman/nvim-lsp-installer#default-configuration>
--- lvim.lsp.installer.setup.ui.check_outdated_servers_on_open = false
+-- lvim.lsp.installer.setup.ui.check_outdated_servers_on_open = falsenull-ls
 -- lvim.lsp.installer.setup.ui.border = "rounded"
 -- lvim.lsp.installer.setup.ui.keymaps = {
 --     uninstall_server = "d",
@@ -136,20 +136,20 @@ an executable
 -- end
 
 -- -- set a formatter, this will override the language server formatting capabilities (if it exists)
--- local formatters = require "lvim.lsp.null-ls.formatters"
--- formatters.setup {
---   { command = "black", filetypes = { "python" } },
---   { command = "isort", filetypes = { "python" } },
---   {
---     -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
---     command = "prettier",
---     ---@usage arguments to pass to the formatter
---     -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
---     extra_args = { "--print-with", "100" },
---     ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
---     filetypes = { "typescript", "typescriptreact" },
---   },
--- }
+local formatters = require "lvim.lsp.null-ls.formatters"
+formatters.setup {
+  { command = "black", filetypes = { "python" } },
+  { command = "isort", filetypes = { "python" } },
+  {
+    -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
+    command = "prettier",
+    ---@usage arguments to pass to the formatter
+    -- these cannot contain whitespaces, options such as `--line-width 80` become either `{'--line-width', '80'}` or `{'--line-width=80'}`
+    extra_args = { "--print-with", "100" },
+    ---@usage specify which filetypes to enable. By default a providers will attach to all the filetypes it supports.
+    filetypes = { "typescript", "typescriptreact" },
+  },
+}
 
 -- -- set additional linters
 -- local linters = require "lvim.lsp.null-ls.linters"
@@ -184,8 +184,7 @@ an executable
 -- -- Harpoon
 -- local status_ok, harpoon = pcall(require, "harpoon")
 -- if not status_ok then
---   return
--- end
+--   return end
 
 -- harpoon.setup({
 --   global_settings = {
@@ -209,14 +208,6 @@ an executable
 --   }
 -- })
 
--- lvim.builtin.which_key.mappings["s"] = { "<cmd> lua require('harpoon.mark').add_file()<cr>", "Harpoon Add"}
--- lvim.builtin.which_key.mappings["d"] = { "<cmd> lua require('harpoon.ui').toggle_quick_menu()<cr>", "Harpoon Menu"}
--- lvim.builtin.which_key.mappings["D"] = { "<cmd> lua require('harpoon.cmd-ui').toggle_quick_menu()<cr>", "Harpoon Cmd Menu"}
--- lvim.builtin.which_key.mappings["j"] = { "<cmd> lua require('harpoon.ui').nav_file(1)<cr>", "Harpoon File 1" }
--- lvim.builtin.which_key.mappings["k"] = { "<cmd> lua require('harpoon.ui').nav_file(2)<cr>", "Harpoon File 2" }
--- lvim.builtin.which_key.mappings["l"] = { "<cmd> lua require('harpoon.ui').nav_file(3)<cr>", "Harpoon File 3" }
--- lvim.builtin.which_key.mappings[";"] = { "<cmd> lua require('harpoon.ui').nav_file(4)<cr>", "Harpoon File 4" }
-
 -- Use which-key to add extra bindings with the leader-key prefix
 -- lvim.builtin.which_key.mappings["P"] = { "<cmd>Telescope projects<CR>", "Projects" }
 -- lvim.builtin.which_key.mappings["t"] = {
@@ -230,18 +221,18 @@ an executable
 -- }
 
 -- Autocommands (https://neovim.io/doc/user/autocmd.html)
--- vim.api.nvim_create_autocmd("BufEnter", {
---   pattern = { "*.json", "*.jsonc" },
---   -- enable wrap mode for json files only
---   command = "setlocal wrap",
--- })
--- vim.api.nvim_create_autocmd("FileType", {
---   pattern = "zsh",
---   callback = function()
---     -- let treesitter use bash highlight for zsh files as well
---     require("nvim-treesitter.highlight").attach(0, "bash")
---   end,
--- })
+vim.api.nvim_create_autocmd("BufEnter", {
+  pattern = { "*.json", "*.jsonc" },
+  -- enable wrap mode for json files only
+  command = "setlocal wrap",
+})
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "zsh",
+  callback = function()
+    -- let treesitter use bash highlight for zsh files as well
+    require("nvim-treesitter.highlight").attach(0, "bash")
+  end,
+})
 
 reload "user.plugins"
 reload "user.options"

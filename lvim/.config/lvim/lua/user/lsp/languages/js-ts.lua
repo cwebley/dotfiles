@@ -19,7 +19,16 @@ require("typescript").setup {
 -- Set a formatter.
 local formatters = require "lvim.lsp.null-ls.formatters"
 formatters.setup {
-  { command = "prettier", filetypes = { "javascript", "typescript", "javascriptreact", "typescriptreact" } },
+
+
+  { command = "prettier", filetypes = { "javascript", "typescript", "javascriptreact", "typescriptreact" },
+    args = { "--print-width", "80" },
+  },
+  -- {
+  --  -- each formatter accepts a list of options identical to https://github.com/jose-elias-alvarez/null-ls.nvim/blob/main/doc/BUILTINS.md#Configuration
+  --  command = "prettierd",
+  --  filetypes = { "typescript", "typescriptreact", "javascript", "javascriptreact", "vue", "svelte" }
+  -- },
 }
 
 local mason_path = vim.fn.glob(vim.fn.stdpath "data" .. "/mason/")
@@ -51,7 +60,7 @@ for _, language in ipairs { "typescript", "javascript" } do
 end
 
 -- Set a linter.
--- local linters = require("lvim.lsp.null-ls.linters")
--- linters.setup({
---   { command = "eslint", filetypes = { "javascript", "typescript" } },
--- })
+local linters = require("lvim.lsp.null-ls.linters")
+linters.setup({
+  { command = "eslint", filetypes = { "javascript", "typescript" } },
+})

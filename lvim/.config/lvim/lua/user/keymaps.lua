@@ -12,6 +12,9 @@ local keymap = vim.keymap.set
 lvim.keys.insert_mode["jk"] = "<ESC>"
 lvim.keys.normal_mode["<C-d>"] = "<C-d>zz"
 lvim.keys.normal_mode["<C-u>"] = "<C-u>zz"
+lvim.keys.visual_mode["<C-d>"] = "<C-d>zz"
+lvim.keys.visual_mode["<C-u>"] = "<C-u>zz"
+
 -- TODO what does this do?
 -- keymap("n", "<C-Space>", "<cmd>WhichKey \\<space><cr>", opts)
 -- keymap("n", "<C-i>", "<C-i>", opts)
