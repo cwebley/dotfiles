@@ -70,6 +70,6 @@ vim.keymap.set("n", "<leader>l", "<cmd> lua require('harpoon.ui').nav_file(3)<cr
 vim.keymap.set("n", "<leader>;", "<cmd> lua require('harpoon.ui').nav_file(4)<cr>", { desc = "Harpoon File 4" });
 
 --undotree
-vim.keymap.set("n", "<leader>u", "vim.cmd.UndotreeToggle", { desc = "[u]ndo tree toggle")
+vim.keymap.set("n", "<leader>u", "vim.cmd.undotreetoggle", { desc = "[u]ndo tree toggle" } )
 
 

@@ -21,5 +21,9 @@ return {
   { "AndrewRadev/tagalong.vim" },
   { 'djoshea/vim-autoread' },
   { "nvim-telescope/telescope-fzf-native.nvim", build = "make", cond = vim.fn.executable 'make' == 1},
-  { "mbbill/undotree" }
+  { "mbbill/undotree" },
+  { "kylechui/nvim-surround", tag = "*",     config = function()
+    require("nvim-surround").setup({
+    })
+  end },
 }
