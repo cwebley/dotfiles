@@ -15,6 +15,11 @@ return {
     { 'hrsh7th/cmp-nvim-lsp' },
     { 'hrsh7th/cmp-nvim-lua' },
 
+    -- null-ls for formatters like prettier
+    {"jose-elias-alvarez/null-ls.nvim"},
+    -- mason-null-ls for the convenience of the NullInstall command
+    {"jay-babu/mason-null-ls.nvim"},
+
     -- Snippets
     { 'L3MON4D3/LuaSnip' },
     -- Snippet Collection (Optional)
@@ -66,6 +71,16 @@ return {
 
     ---@diagnostic disable-next-line: unused-local
     lsp.on_attach(function(client, bufnr)
+
+      -- Disable LSP server formatting in cases were null-ls should take over, to prevent formatting twice. 
+      if client.name == "tsserver" then
+        client.server_capabilities.documentFormattingProvider = false
+        
+        -- although prettierd doesn't do range formatting anyway... but maybe eslintd does
+        -- https://github.com/jose-elias-alvarez/null-ls.nvim/issues/1321
+        client.server_capabilities.documentFormattingRangeProvider = false
+      end
+
       local opts = { buffer = bufnr, remap = false }
 
       vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
@@ -81,5 +96,37 @@ return {
       vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
     end)
     lsp.setup()
+
+    local null_ls = require('null-ls')
+    local null_opts = lsp.build_options('null-ls', {})
+
+    null_ls.setup({
+      on_attach = function(client, bufnr)
+        null_opts.on_attach(client, bufnr)
+        ---
+        -- you can add other stuff here....
+        ---
+      end,
+      sources = {
+        -- Replace these with the tools you want to install
+        -- null_ls.builtins.formatting.prettierd,
+        null_ls.builtins.formatting.eslint_d,
+        -- null_ls.builtins.diagnostics.eslint,
+        -- null_ls.builtins.formatting.stylua,
+      }
+    })
+
+    -- See mason-null-ls.nvim's documentation for more details:
+    -- https://github.com/jay-babu/mason-null-ls.nvim#setup
+    require('mason-null-ls').setup({
+      ensure_installed = nil,
+      automatic_installation = true,
+      automatic_setup = true,
+    })
+
+
+    -- Required when `automatic_setup` is true
+    require('mason-null-ls').setup_handlers()
+
   end
 }
