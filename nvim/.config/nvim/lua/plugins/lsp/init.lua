@@ -27,6 +27,7 @@ return {
   },
   config = function()
     local lsp = require('lsp-zero')
+    -- under the hood this is what this does: https://github.com/VonHeikemen/lsp-zero.nvim/wiki/Under-the-hood
     lsp.preset('recommended')
 
     lsp.ensure_installed {
@@ -54,6 +55,8 @@ return {
       ['<C-y>'] = cmp.mapping.confirm({ select = true }),
       ['<C-Space>'] = cmp.mapping.complete(),
     })
+
+    -- luasnips C-b and C-n to jump back and forward within snippet
 
     -- disable completion with tab
     -- this helps with copilot setup
