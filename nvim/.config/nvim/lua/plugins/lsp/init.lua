@@ -16,9 +16,9 @@ return {
     { 'hrsh7th/cmp-nvim-lua' },
 
     -- null-ls for formatters like prettier
-    {"jose-elias-alvarez/null-ls.nvim"},
+    { "jose-elias-alvarez/null-ls.nvim" },
     -- mason-null-ls for the convenience of the NullInstall command
-    {"jay-babu/mason-null-ls.nvim"},
+    { "jay-babu/mason-null-ls.nvim" },
 
     -- Snippets
     { 'L3MON4D3/LuaSnip' },
@@ -34,6 +34,7 @@ return {
       'tsserver',
       'eslint',
       'sumneko_lua',
+      'emmet_ls',
     }
 
     -- Fix Undefined global 'vim'
@@ -75,10 +76,10 @@ return {
     ---@diagnostic disable-next-line: unused-local
     lsp.on_attach(function(client, bufnr)
 
-      -- Disable LSP server formatting in cases were null-ls should take over, to prevent formatting twice. 
+      -- Disable LSP server formatting in cases were null-ls should take over, to prevent formatting twice.
       if client.name == "tsserver" then
         client.server_capabilities.documentFormattingProvider = false
-        
+
         -- although prettierd doesn't do range formatting anyway... but maybe eslintd does
         -- https://github.com/jose-elias-alvarez/null-ls.nvim/issues/1321
         client.server_capabilities.documentFormattingRangeProvider = false
