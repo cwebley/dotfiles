@@ -59,7 +59,7 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 --tmux-sessionizer
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<cr>")
 --neotree
-vim.keymap.set("n", "<leader>e", "<cmd>Neotree toggle=true position=right<cr>")
+vim.keymap.set("n", "<leader>e", "<cmd>Neotree reveal toggle=true position=right<cr>")
 
 --harpoon
 vim.keymap.set("n", "<leader>f", "<cmd> lua require('harpoon.mark').add_file()<cr>", { desc = "Harpoon Add ([f]ish)" });
