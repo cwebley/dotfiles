@@ -1,24 +1,24 @@
-return  {
+return {
   'VonHeikemen/lsp-zero.nvim',
 
   dependencies = {
     -- LSP Support
-    {'neovim/nvim-lspconfig'},
-    {'williamboman/mason.nvim'},
-    {'williamboman/mason-lspconfig.nvim'},
+    { 'neovim/nvim-lspconfig' },
+    { 'williamboman/mason.nvim' },
+    { 'williamboman/mason-lspconfig.nvim' },
 
     -- Autocompletion
-    {'hrsh7th/nvim-cmp'},
-    {'hrsh7th/cmp-buffer'},
-    {'hrsh7th/cmp-path'},
-    {'saadparwaiz1/cmp_luasnip'},
-    {'hrsh7th/cmp-nvim-lsp'},
-    {'hrsh7th/cmp-nvim-lua'},
+    { 'hrsh7th/nvim-cmp' },
+    { 'hrsh7th/cmp-buffer' },
+    { 'hrsh7th/cmp-path' },
+    { 'saadparwaiz1/cmp_luasnip' },
+    { 'hrsh7th/cmp-nvim-lsp' },
+    { 'hrsh7th/cmp-nvim-lua' },
 
     -- Snippets
-    {'L3MON4D3/LuaSnip'},
+    { 'L3MON4D3/LuaSnip' },
     -- Snippet Collection (Optional)
-    {'rafamadriz/friendly-snippets'},
+    { 'rafamadriz/friendly-snippets' },
   },
   config = function()
     local lsp = require('lsp-zero')
@@ -49,7 +49,7 @@ return  {
       ['<C-y>'] = cmp.mapping.confirm({ select = true }),
       ['<C-Space>'] = cmp.mapping.complete(),
     })
-    
+
     -- disable completion with tab
     -- this helps with copilot setup
     cmp_mappings['<Tab>'] = nil
@@ -63,9 +63,10 @@ return  {
     --   print('on_attach')
     --
     -- end
-    --
+
+    ---@diagnostic disable-next-line: unused-local
     lsp.on_attach(function(client, bufnr)
-      local opts = {buffer = bufnr, remap = false}
+      local opts = { buffer = bufnr, remap = false }
 
       vim.keymap.set("n", "gd", function() vim.lsp.buf.definition() end, opts)
       vim.keymap.set("n", "K", function() vim.lsp.buf.hover() end, opts)
@@ -76,6 +77,7 @@ return  {
       vim.keymap.set("n", "<leader>vca", function() vim.lsp.buf.code_action() end, opts)
       vim.keymap.set("n", "<leader>vrr", function() vim.lsp.buf.references() end, opts)
       vim.keymap.set("n", "<leader>vrn", function() vim.lsp.buf.rename() end, opts)
+      vim.keymap.set("n", "<leader>F", "<cmd>LspZeroFormat<cr>", opts)
       vim.keymap.set("i", "<C-h>", function() vim.lsp.buf.signature_help() end, opts)
     end)
     lsp.setup()
