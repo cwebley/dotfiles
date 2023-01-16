@@ -53,8 +53,23 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 --keymap("n", "<C-l>", "<C-w>l", opts)
 
 -- remove search highlighting by pressing Enter again
-vim.keymap.set("n", "<CR>", ":noh<CR>")
+-- this may be covered by vim-cool
+-- vim.keymap.set("n", "<CR>", ":noh<CR>")
 
 --tmux-sessionizer
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<cr>")
+--neotree
+vim.keymap.set("n", "<leader>e", "<cmd>Neotree toggle=true position=right<cr>")
+
+--harpoon
+vim.keymap.set("n", "<leader>f", "<cmd> lua require('harpoon.mark').add_file()<cr>", { desc = "Harpoon Add ([f]ish)" });
+vim.keymap.set("n", "<leader>d", "<cmd> lua require('harpoon.ui').toggle_quick_menu()<cr>", { desc = "Harpoon [d]irectory" });
+vim.keymap.set("n", "<leader>j", "<cmd> lua require('harpoon.ui').nav_file(1)<cr>", { desc = "Harpoon File 1" });
+vim.keymap.set("n", "<leader>k", "<cmd> lua require('harpoon.ui').nav_file(2)<cr>", { desc = "Harpoon File 2" });
+vim.keymap.set("n", "<leader>l", "<cmd> lua require('harpoon.ui').nav_file(3)<cr>", { desc = "Harpoon File 3" });
+vim.keymap.set("n", "<leader>;", "<cmd> lua require('harpoon.ui').nav_file(4)<cr>", { desc = "Harpoon File 4" });
+
+--undotree
+vim.keymap.set("n", "<leader>u", "vim.cmd.UndotreeToggle", { desc = "[u]ndo tree toggle")
+
 

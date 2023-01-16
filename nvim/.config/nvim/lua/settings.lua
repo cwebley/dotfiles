@@ -62,11 +62,4 @@ vim.opt.diffexpr = ""
 vim.o.ls = 0
 vim.o.ch = 0
 
--- highlight yanked region. maybe this belongs in an autocmd file as more get added
-vim.api.nvim_create_autocmd("TextYankPost", {
-  callback = function()
-    vim.highlight.on_yank { higroup = (
-        vim.fn['hlexists']('HighlightedyankRegion') > 0 and 'HighlightedyankRegion' or 'IncSearch'), timeout = 200 }
-  end
-})
 
