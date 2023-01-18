@@ -72,4 +72,5 @@ vim.keymap.set("n", "<leader>;", "<cmd> lua require('harpoon.ui').nav_file(4)<cr
 --undotree
 vim.keymap.set("n", "<leader>u", "<cmd> UndotreeToggle <cr>", { desc = "[u]ndo tree toggle" } )
 
-
+--vimwiki
+vim.keymap.set("n", "<leader>C", "<cmd> VimwikiToggleListItem <cr>", { desc = "VimwikiToggleListItem" } )
