@@ -113,8 +113,8 @@ return {
       end,
       sources = {
         -- Replace these with the tools you want to install
-        -- null_ls.builtins.formatting.prettierd,
-        null_ls.builtins.formatting.eslint_d,
+        null_ls.builtins.formatting.prettierd,
+        -- null_ls.builtins.formatting.eslint_d,
         -- null_ls.builtins.diagnostics.eslint,
         -- null_ls.builtins.formatting.stylua,
       }
@@ -123,7 +123,9 @@ return {
     -- See mason-null-ls.nvim's documentation for more details:
     -- https://github.com/jay-babu/mason-null-ls.nvim#setup
     require('mason-null-ls').setup({
-      ensure_installed = nil,
+      ensure_installed = {
+        'prettierd'
+      },
       automatic_installation = true,
       automatic_setup = true,
     })
