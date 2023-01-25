@@ -1,5 +1,6 @@
 # Use neovim
 export EDITOR="nvim"
+export N_PREFIX="$HOME/n"
 
 # this needs to precede /usr/local/bin if there is another node install there.
 # export PATH="$N_PREFIX/bin:$PATH"
