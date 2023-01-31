@@ -9,6 +9,18 @@ local function get_git_head()
   return " " .. head
 end
 
+local function search_result()
+  if vim.v.hlsearch == 0 then
+    return ''
+  end
+  local last_search = vim.fn.getreg('/')
+  if not last_search or last_search == '' then
+    return ''
+  end
+  local searchcount = vim.fn.searchcount { maxcount = 9999 }
+  return last_search .. '(' .. searchcount.current .. '/' .. searchcount.total .. ')'
+end
+
 return {
   "nvim-lualine/lualine.nvim",
   requires = { "kyazdani42/nvim-web-devicons", opt = true },
@@ -42,7 +54,7 @@ return {
         lualine_d = {},
         lualine_w = {},
         lualine_x = {},
-        lualine_y = {},
+        lualine_y = { search_result },
         lualine_z = {},
       },
     })
