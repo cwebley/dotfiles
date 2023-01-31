@@ -55,7 +55,7 @@ return {
         lualine_w = {},
         lualine_x = {},
         lualine_y = { search_result },
-        lualine_z = {},
+        lualine_z = { '%l:%c', '%p%%/%L' },
       },
     })
   end
