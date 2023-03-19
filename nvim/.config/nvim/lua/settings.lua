@@ -50,6 +50,8 @@ vim.opt.cindent = true
 vim.opt.tabstop = 2
 vim.opt.expandtab = true
 
+-- vim.opt.shortmess:append "c"
+
 -- Plugins
 -- vim.g.closetag_filenames = "*.html,*.jsx,*.js,*.tsx,*.vue"
 -- vim.g.vimwiki_map_prefix = "<Leader><F13>"

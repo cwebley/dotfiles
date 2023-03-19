@@ -24,5 +24,7 @@ require("lazy").setup("plugins", {
 })
 
 
+vim.cmd.colorscheme('kanagawa')
+
 
 require("mappings")
