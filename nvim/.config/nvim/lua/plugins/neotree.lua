@@ -36,7 +36,11 @@ return {
           end
         },
 
-      }
+      },
+      window = {
+        position = "right",
+        width = 60,
+      },
     })
   end
 }

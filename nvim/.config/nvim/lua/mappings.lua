@@ -58,6 +58,7 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 
 --tmux-sessionizer
 vim.keymap.set("n", "<C-f>", "<cmd>silent !tmux neww tmux-sessionizer<cr>")
+
 --neotree
 vim.keymap.set("n", "<leader>e", "<cmd>Neotree reveal toggle=true position=right<cr>")
 
