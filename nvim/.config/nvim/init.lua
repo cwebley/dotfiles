@@ -34,3 +34,12 @@ vim.keymap.set("n", "<C-d>", "<C-d>zz")
 
 -- Paste without overwriting the register
 vim.keymap.set("v", "p", '"_dP')
+-- highlight yanked region. maybe this belongs in an autocmd file as more get added
+vim.api.nvim_create_autocmd("TextYankPost", {
+	callback = function()
+		vim.highlight.on_yank({
+			higroup = (vim.fn["hlexists"]("HighlightedyankRegion") > 0 and "HighlightedyankRegion" or "IncSearch"),
+			timeout = 200,
+		})
+	end,
+})
