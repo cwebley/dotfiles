@@ -15,7 +15,7 @@ return {
 	},
 	{ "WhoIsSethDaniel/mason-tool-installer.nvim" },
 	-- Useful status updates for LSP.
-	{ "j-hui/fidget.nvim", opts = {} },
+	{ "j-hui/fidget.nvim",                        opts = {} },
 	{
 		"neovim/nvim-lspconfig",
 		config = function()
@@ -102,6 +102,14 @@ return {
 			})
 			lspconfig.tsserver.setup({
 				capabilities = capabilities,
+			})
+			lspconfig.astro.setup({
+				capabilities = capabilities,
+				-- init_options = {
+				-- 	typescript = {
+				-- 		tsdk = vim.fs.normalize("typescript.tsdk = 'node_modules/typescript/lib'"),
+				-- 	},
+				-- },
 			})
 			lspconfig.marksman.setup({
 				capabilities = capabilities,
