@@ -22,12 +22,12 @@ eslint.args = {
   end,
 }
 
-vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
-  group = lint_augroup,
-  callback = function()
-    lint.try_lint()
-  end,
-})
+-- vim.api.nvim_create_autocmd({ "BufEnter", "BufWritePost", "InsertLeave" }, {
+--   group = lint_augroup,
+--   callback = function()
+--     lint.try_lint()
+--   end,
+-- })
 
 vim.keymap.set("n", "<leader>L", function()
   lint.try_lint()
