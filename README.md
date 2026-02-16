@@ -9,9 +9,10 @@ stow --restow nvim
 stow --restow lvim
 stow --restow misc
 stow --restow zsh
-show --restow tmux
+stow --restow tmux
+stow --restow alacritty
+stow --restow aerospace
 
 ```
 
 The --restow parameter tells stow to unstow the packages first before stowing them again, which is useful for pruning obsolete symlinks from the target directory.
-

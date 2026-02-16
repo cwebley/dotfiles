@@ -1,15 +1,17 @@
-# [Created by task 3.1.0 12/1/2024 22:49:56]
-news.version=3.1.0
+# [Created by task 3.4.2 2/14/2026 17:35:55]
+data.location=/Users/cwebley/.task
+news.version=3.4.2
 
 # To use the default location of the XDG directories,
 # move this configuration file from ~/.taskrc to ~/.config/task/taskrc and update location config as follows:
 
-data.location=~/.local/share/task
-# hooks.location=~/.config/task/hooks
+#data.location=~/.local/share/task
+#hooks.location=~/.config/task/hooks
 
 # Color theme (uncomment one to use)
 #include light-16.theme
 #include light-256.theme
+#include bubblegum-256.theme
 #include dark-16.theme
 #include dark-256.theme
 #include dark-red-256.theme
@@ -23,7 +25,6 @@ data.location=~/.local/share/task
 #include solarized-light-256.theme
 #include no-color.theme
 
-sync.gcp.bucket=cams-tasks
-
-# Include secrets. See task_secrets_example for the format
-include ~/.config/task/task_secrets
+sync.server.url=http:\/\/132.226.147.235:8080
+sync.server.client_id=DAB5FF99-EB7D-4E2E-BD0F-505A347E022B
+sync.encryption_secret=UwXOfjbfAUEJv46zmD6LUHl3iqJ6FApUYUhi7A9N\/ww=
