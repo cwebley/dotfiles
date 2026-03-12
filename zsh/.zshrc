@@ -129,3 +129,16 @@ export PATH="/usr/local/opt/ruby/bin:$PATH"
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 source ~/.zsh_profile
+
+# opencode
+export PATH=/Users/cwebley/.opencode/bin:$PATH
+
+# bun completions
+[ -s "/Users/cwebley/.bun/_bun" ] && source "/Users/cwebley/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+
+# export OPENROUTER_API_KEY="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"

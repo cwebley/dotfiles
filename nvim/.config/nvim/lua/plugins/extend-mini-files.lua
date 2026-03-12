@@ -1,5 +1,5 @@
 return {
-  "echasnovski/mini.files",
+  "nvim-mini/mini.files",
   lazy = false, -- prevent netrw default behavior when nvim opened to a directory
   keys = {
     {
