@@ -1,1 +1,4 @@
 task/.config/task/task_secrets
+
+# editor/tool backup files
+*.bak

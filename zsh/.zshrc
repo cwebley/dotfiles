@@ -7,16 +7,16 @@ eval "$(fnm env --use-on-cd --version-file-strategy=recursive --shell zsh)"
 # this needs to precede /usr/local/bin if there is another node install there.
 # export PATH="$N_PREFIX/bin:$PATH"
 
-# vim golf stuff. maybe not necessary
-export PATH="/usr/local/opt/ruby/bin:$PATH"
-export PATH="/usr/local/opt/ruby/bin:/usr/local/lib/ruby/gems/3.1.0/bin:$PATH"
 
-# TODO: use of `~` might not be working here. could this be why taskwiki isn't working?
-export PATH="~/.gem/gems:$PATH"
-export PATH="~/.gem/ruby/2.6.0:$PATH"
-export PATH="~/.gem/ruby/2.6.0/cache:$PATH"
-export PATH="~/.gem/ruby/2.6.0/cache:$PATH"
-export PATH="~/src/tasklib:$PATH"
+# taskwiki/tasklib -- $HOME instead of ~ so it actually expands.
+# NOTE: ~/src/tasklib does not exist yet, so this is inert until you create it.
+export PATH="$HOME/src/tasklib:$PATH"
+
+# --- Go ---
+# The `go` binary itself comes from /opt/homebrew/bin via brew shellenv in
+# ~/.zprofile, so it is already on PATH. This line is for binaries that
+# `go install` writes to $GOPATH/bin (gopls, dlv, staticcheck, etc).
+export PATH="$HOME/go/bin:$PATH"
 
 if which ruby >/dev/null && which gem >/dev/null; then
     PATH="$(ruby -r rubygems -e 'puts Gem.user_dir')/bin:$PATH"
@@ -115,9 +115,7 @@ source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 # syntax highlighting needs to be at the end
 source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
-export PATH="/usr/local/opt/ruby/bin:$PATH"
-export PATH="/usr/local/opt/ruby/bin:$PATH"
-export PATH="/usr/local/opt/ruby/bin:$PATH"
+# (removed 3x duplicate /usr/local/opt/ruby/bin export -- see Ruby note above)
 
 # from oh-my-zsh which i am not using here...
 # # Set personal aliases, overriding those provided by oh-my-zsh libs,
@@ -141,4 +139,3 @@ export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
 
-# export OPENROUTER_API_KEY="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"
