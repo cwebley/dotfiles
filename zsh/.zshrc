@@ -128,6 +128,9 @@ source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 source ~/.zsh_profile
 
+# Private environment variables, kept outside the dotfiles repository.
+[[ -f "$HOME/.zsh_secrets" ]] && source "$HOME/.zsh_secrets"
+
 # opencode
 export PATH=/Users/cwebley/.opencode/bin:$PATH
 

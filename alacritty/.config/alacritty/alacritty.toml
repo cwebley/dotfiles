@@ -48,6 +48,7 @@ family = "ComicCodeLigatures Nerd Font"
 style = "Regular"
 
 [window]
+option_as_alt = "Both"
 decorations = "buttonless"
 startup_mode = "Maximized"
 

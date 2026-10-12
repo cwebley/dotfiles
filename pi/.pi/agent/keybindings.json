@@ -1,0 +1,6 @@
+{
+  "app.clipboard.pasteImage": ["ctrl+v", "super+v"],
+  "app.model.cycleForward": [],
+  "tui.altScreen.halfPageUp": "ctrl+p",
+  "tui.altScreen.halfPageDown": "ctrl+n"
+}

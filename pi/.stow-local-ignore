@@ -1,0 +1,7 @@
+# Only .pi/ and .local/ command links are installed into HOME. Documentation and tests stay in the repository.
+^/(README\.md|docs|tests)(/|$)
+(^|/)\.gitignore$
+(^|/)\.stow-local-ignore$
+node_modules
+(^|/)\.DS_Store$
+__pycache__

@@ -130,8 +130,9 @@ alt-n = 'workspace N'
 alt-o = 'workspace O'
 alt-p = 'workspace P'
 alt-q = 'workspace Q'
-alt-r = 'workspace R'
-alt-s = 'workspace S'
+alt-r = 'exec-and-forget /opt/homebrew/bin/tmux run-shell -b "/Users/cwebley/.local/bin/trailmix toggle >/dev/null"'
+# Reserved for Pi prompt snippets (Option+S).
+# alt-s = 'workspace S'
 alt-t = 'workspace T'
 alt-u = 'workspace U'
 alt-v = 'workspace V'
@@ -163,8 +164,8 @@ alt-shift-n = 'move-node-to-workspace N'
 alt-shift-o = 'move-node-to-workspace O'
 alt-shift-p = 'move-node-to-workspace P'
 alt-shift-q = 'move-node-to-workspace Q'
-alt-shift-r = 'move-node-to-workspace R'
-alt-shift-s = 'move-node-to-workspace S'
+# Reserved for terminal shortcuts (Option+Shift+S).
+# alt-shift-s = 'move-node-to-workspace S'
 alt-shift-t = 'move-node-to-workspace T'
 alt-shift-u = 'move-node-to-workspace U'
 alt-shift-v = 'move-node-to-workspace V'
@@ -234,4 +235,3 @@ run = ['move-node-to-workspace 1']
 
 [exec.env-vars]
 PATH = '${HOME}/bin:${PATH}'
-

@@ -1,0 +1,6 @@
+# Shared skill sources and their source lock are installed into ~/.agents/.
+^/(README\.md|UPSTREAM-LICENSE)$
+(^|/)\.gitignore$
+(^|/)\.stow-local-ignore$
+(^|/)\.DS_Store$
+__pycache__

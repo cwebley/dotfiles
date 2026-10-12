@@ -1,0 +1,48 @@
+{
+  "lastChangelogVersion": "1.1.0",
+  "defaultProvider": "openai",
+  "defaultTools": [
+    "+codemode"
+  ],
+  "defaultModel": "gpt-6.1-sol",
+  "deviceId": "a18c7fb6-8155-40de-8e98-75408ee8640a",
+  "skills": [
+    "!ask-matt",
+    "!code-review",
+    "!codebase-design",
+    "!diagnosing-bugs",
+    "!domain-modeling",
+    "!grill-me",
+    "!grill-with-docs",
+    "!grilling",
+    "!implement",
+    "!implement-spec",
+    "!improve-codebase-architecture",
+    "!loop-me",
+    "!migrate-to-shoehorn",
+    "!prototype",
+    "!resolving-merge-conflicts",
+    "!retro",
+    "!scaffold-exercises",
+    "!setup-matt-pocock-skills",
+    "!setup-pre-commit",
+    "!setup-ts-deep-modules",
+    "!tdd",
+    "!teach",
+    "!to-questionnaire",
+    "!to-spec",
+    "!to-tickets",
+    "!triage",
+    "!wait-what",
+    "!wayfinder",
+    "!wizard",
+    "!writing-beats",
+    "!writing-for-agents",
+    "!writing-fragments",
+    "!writing-shape"
+  ],
+  "packages": [
+    "git:github.com/amosblomqvist/pi-interactive-subagents@c3e8b53c0754ae5ccc19fdab5a7481ec039bc2f7"
+  ],
+  "hideThinkingBlock": true
+}

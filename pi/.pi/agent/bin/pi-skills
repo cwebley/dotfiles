@@ -1,0 +1,71 @@
+#!/usr/bin/env python3
+"""Toggle Matt Pocock's installed skills in Pi without changing Claude.
+
+Usage: pi-skills matt on|off|status
+After changing a running Pi session, run /reload. Explicit --skill paths can
+still load a disabled skill for one invocation. Research stays enabled.
+"""
+import json
+import os
+from pathlib import Path
+import sys
+import tempfile
+
+KEEP_FROM_MATT = {"research"}
+
+
+def main():
+    if len(sys.argv) != 3 or sys.argv[1] != "matt" or sys.argv[2] not in {"on", "off", "status"}:
+        print("Usage: pi-skills matt on|off|status", file=sys.stderr)
+        return 2
+    action = sys.argv[2]
+    home = Path.home()
+    settings_path = Path(os.environ.get("PI_SKILLS_SETTINGS", home / ".pi/agent/settings.json")).expanduser().resolve(strict=True)
+    lock_path = Path(os.environ.get("PI_SKILLS_LOCK", home / ".agents/.skill-lock.json")).expanduser()
+    shared_path = Path(os.environ.get("PI_SKILLS_SHARED", home / ".agents/skills")).expanduser()
+    lock = json.loads(lock_path.read_text())
+    matt = {
+        name for name, info in lock["skills"].items()
+        if info.get("source") == "mattpocock/skills"
+        and (shared_path / name / "SKILL.md").is_file()
+    } - KEEP_FROM_MATT
+    if not matt:
+        raise ValueError("No Matt Pocock skills found in the skills lock file")
+    settings = json.loads(settings_path.read_text())
+    paths = settings.get("skills", [])
+    if not isinstance(paths, list) or not all(isinstance(item, str) for item in paths):
+        raise ValueError("settings.skills must be an array of strings")
+    patterns = {"!" + name for name in matt}
+    excluded = patterns.intersection(paths)
+    if action == "status":
+        state = "off" if excluded == patterns else "on" if not excluded else "mixed"
+        print(f"Matt skills: {state} ({len(excluded)}/{len(matt)} group exclusions)")
+        print("Research stays enabled. Only shared Matt skills belong to this toggle.")
+        return 0
+    # Only change this group's simple exclusions; preserve all other settings.
+    paths = [path for path in paths if path not in patterns]
+    if action == "off":
+        paths.extend(sorted(patterns))
+    settings["skills"] = paths
+    content = json.dumps(settings, indent=2) + "\n"
+    if content != settings_path.read_text():
+        fd, temp_path = tempfile.mkstemp(prefix=".pi-skills-", dir=settings_path.parent)
+        try:
+            with os.fdopen(fd, "w") as output:
+                output.write(content)
+            os.chmod(temp_path, settings_path.stat().st_mode & 0o777)
+            os.replace(temp_path, settings_path)
+        finally:
+            if os.path.exists(temp_path):
+                os.unlink(temp_path)
+    print(f"Matt skills: {action}. Research stays enabled; Claude is unchanged.")
+    print("Run /reload in an existing Pi session, or start a new session.")
+    return 0
+
+
+if __name__ == "__main__":
+    try:
+        sys.exit(main())
+    except (OSError, ValueError, KeyError) as error:
+        print(f"pi-skills: {error}", file=sys.stderr)
+        sys.exit(1)
