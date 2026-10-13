@@ -13,7 +13,8 @@ cd ~/dotfiles
 
 - `.pi/agent/settings.json` and `keybindings.json`: preferences and keyboard controls.
 - `.pi/agent/agents/`: worker, scout, researcher and custom junior-engineer profiles.
-- `.pi/agent/extensions/`: browser, clipboard image paste, prompt snippets, Brave search, web fetch and question UI.
+- `.pi/agent/extensions/`: browser, clipboard image paste, prompt snippets, Brave search, web fetch, question UI and subscription footer.
+- `docs/subscription-footer.md`: browser-free OpenAI plan usage through the official Codex CLI, with subscription dollar costs hidden.
 - `.pi/agent/prompts/`: prompt templates.
 - `.pi/agent/skills/web-debug/`: Pi-specific browser debugging skill.
 - `.pi/agent/bin/pi-skills`: shared Matt Pocock skill toggle. Its `~/.local/bin/pi-skills` command link is also stored in this package and managed by Stow.
@@ -53,6 +54,7 @@ Brave reads `BRAVE_SEARCH_API_KEY` from the inherited environment. `zsh/.zshrc` 
 cd ~/dotfiles
 node pi/tests/researcher/run.mjs
 node pi/tests/researcher/load-live.mjs
+node --test pi/tests/subscription-footer/*.test.mjs
 ~/.local/bin/pi-skills matt status
 ```
 
