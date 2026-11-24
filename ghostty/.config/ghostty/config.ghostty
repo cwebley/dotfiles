@@ -1,0 +1,21 @@
+# Ported from alacritty/.config/alacritty/alacritty.toml.
+# Install the licensed Comic Code fonts privately; Ghostty falls back if absent.
+font-family = ComicCodeLigatures Nerd Font
+font-size = 22
+
+# Both Option keys act as Alt for shell/tmux applications.
+macos-option-as-alt = true
+
+# Closest buttonless-window equivalent; keep native window decorations.
+macos-window-buttons = hidden
+maximize = true
+
+# Preserve the explicit byte sequences from the Alacritty config.
+keybind = ctrl+q=text:\x11
+keybind = alt+h=esc:h
+keybind = alt+j=esc:j
+keybind = alt+k=esc:k
+keybind = alt+l=esc:l
+keybind = super+alt+space=text:\xc2\xa0
+
+# Ligatures use Ghostty's defaults. No automatic tmux startup, tabs or splits.

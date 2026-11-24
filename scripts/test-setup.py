@@ -8,7 +8,7 @@ import tempfile
 import unittest
 
 REPO = Path(__file__).resolve().parents[1]
-PACKAGES = ['nvim', 'zsh', 'tmux', 'alacritty', 'aerospace', 'lazygit', 'git', 'pi', 'agent-skills']
+PACKAGES = ['nvim', 'zsh', 'tmux', 'ghostty', 'alacritty', 'aerospace', 'lazygit', 'git', 'pi', 'agent-skills']
 
 
 class SetupTests(unittest.TestCase):
@@ -63,7 +63,8 @@ class SetupTests(unittest.TestCase):
                 self.assertEqual((home / rel).read_text(), 'local state, not dotfiles\n')
             for rel in ['.zshrc', '.zprofile', '.zshenv', '.tmux.conf',
                         '.pi/agent/settings.json', '.pi/agent/extensions/subagent-pane-label.ts',
-                        '.local/bin/pi-skills', '.config/git/ignore']:
+                        '.local/bin/pi-skills', '.config/git/ignore',
+                        '.config/ghostty/config.ghostty']:
                 self.assertTrue((home / rel).is_symlink(), rel)
                 self.assertTrue((home / rel).exists(), rel)
             for rel in ['research', 'docs', 'tests', 'README.md', '.zshrc~', '..zshrc.un~']:

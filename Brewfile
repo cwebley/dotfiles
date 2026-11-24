@@ -1,5 +1,8 @@
 # Optional shortcut for the Homebrew steps in docs/new-mac.md.
 # Does not configure macOS preferences, accounts or private files.
+# User-level app bundles avoid /Applications writes from a standard account.
+cask_args appdir: "~/Applications"
+
 tap "nikitabobko/tap"
 
 brew "stow"
@@ -17,5 +20,5 @@ brew "zsh-syntax-highlighting"
 brew "gitleaks"
 brew "fontforge"
 
-cask "alacritty"
+cask "ghostty"
 cask "nikitabobko/tap/aerospace"

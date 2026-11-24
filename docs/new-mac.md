@@ -27,7 +27,8 @@ Install Apple's command-line tools with `xcode-select --install` if needed. Inst
 
 ```sh
 eval "$(/opt/homebrew/bin/brew shellenv)"
-brew install --cask alacritty
+mkdir -p "$HOME/Applications"
+brew install --cask --appdir="$HOME/Applications" ghostty
 brew install stow fzf jq ripgrep
 ```
 
@@ -82,8 +83,8 @@ Preview and link the selected configuration:
 
 ```sh
 cd "$HOME/dotfiles"
-./setup.sh --simulate nvim zsh tmux alacritty aerospace lazygit git pi agent-skills
-./setup.sh nvim zsh tmux alacritty aerospace lazygit git pi agent-skills
+./setup.sh --simulate nvim zsh tmux ghostty aerospace lazygit git pi agent-skills
+./setup.sh nvim zsh tmux ghostty aerospace lazygit git pi agent-skills
 ```
 
 If Stow reports a conflict, compare the existing file with its repo source. Back up only the conflicting file outside the repo, preserve any customizations, then retry. Never use `--adopt` or delete a directory of unknown configuration.
@@ -103,6 +104,8 @@ Git uses this location by default unless `core.excludesFile` overrides it. Check
 The selected Stow set leaves out legacy `lvim` and machine-specific `misc` scripts. Running `./setup.sh` without arguments still installs the historical default set, which does not include the new `git` package. Taskwarrior is optional and needs its own software install, Stow package and private secrets.
 
 Open a new terminal after linking shell configuration.
+
+Ghostty replaces Alacritty as the default terminal. The Brewfile installs app bundles into `~/Applications`, matching the standard-account setup. It does not move existing system-wide apps. See [Ghostty setup](ghostty.md) for configuration migration details, validation and live acceptance checks. The legacy `alacritty` Stow package remains available explicitly, but its disabled Homebrew cask is no longer requested.
 
 ### Optional: apply and test macOS preferences
 
@@ -219,9 +222,9 @@ TrailMix is not installed here. Its Neovim integration and AeroSpace `alt-r` sho
    ```
 
 6. Open Font Book and add all six patched files.
-7. Restart Alacritty. Its config expects the family `ComicCodeLigatures Nerd Font`. If the patcher produces a different family name, check Font Book and adjust the Alacritty font family to match.
+7. Restart Ghostty. Its config expects the family `ComicCodeLigatures Nerd Font`. If the patcher produces a different family name, check Font Book and adjust the Ghostty font family to match. Ghostty also has built-in Nerd Font symbol fallback, so using the original unpatched Comic Code Ligatures font with its actual family name is another option.
 
-If you already have a private backup of all six patched fonts, install those instead of patching again. Until the configured font is installed, Alacritty uses a fallback.
+If you already have a private backup of all six patched fonts, install those instead of patching again. Until the configured font is installed, Ghostty uses a fallback.
 
 ## 8. Verify and maintain
 
@@ -244,6 +247,6 @@ The automated tests use temporary homes or mocked preferences/network/authentica
 2. Use `/plan-usage` after the optional Codex login.
 3. Ask Pi for one Brave search to confirm its inherited key works.
 4. Use `/browser on` and ask Pi to open a public page to confirm Chromium launches.
-5. Check the font, clipboard and keybindings in Neovim and Alacritty.
+5. Check the font, clipboard and keybindings in Neovim and Ghostty, including inside tmux.
 
 Keep software installs, credentials and macOS preferences separate from the public configuration. Don't upload `~/.pi`, browser profiles, `~/.ssh` private keys or `~/.zsh_secrets` to Git.

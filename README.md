@@ -6,7 +6,7 @@ Clone this repository at `~/dotfiles` and install selected packages:
 
 ```sh
 cd ~/dotfiles
-./setup.sh nvim zsh tmux alacritty aerospace lazygit git pi agent-skills
+./setup.sh nvim zsh tmux ghostty aerospace lazygit git pi agent-skills
 ```
 
 Run `./setup.sh` without package names for the full default set, including lvim and misc. The script uses `--restow --no-folding` and targets HOME explicitly. Preview the same operation with `./setup.sh --simulate pi agent-skills`. Never use `--adopt` to overwrite source with unknown home-directory state.
