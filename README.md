@@ -24,10 +24,15 @@ The `git` package manages global ignore patterns only, not your identity or cred
 
 `zsh/.zshenv` sources `~/.zsh_secrets` for interactive and non-interactive zsh. That private file is outside this repository and ignored if accidentally copied inside it. Keep it mode 600 and limited to environment assignments. Commit the loader, never the private file. Open a new shell and start Pi from it after changing private values.
 
+## Optional macOS preferences
+
+`python3 scripts/macos-preferences.py --show` previews your saved preferences without changing anything. Explicit apply commands, backups, undo and the new-Mac behavior checks are in [macOS preferences helper and acceptance checklist](docs/macos-preferences.md). Stow and the Brewfile never run it. Preference storage was inspected on macOS 15.7.7; actual activation is still awaiting acceptance testing.
+
 ## Setup checks
 
 ```sh
 python3 scripts/test-setup.py
+python3 -m unittest discover -s scripts/tests -v
 ```
 
 This checks a fresh install, repeated Stow runs with private/runtime state present, private environment loading and conflict preservation in a temporary HOME. It does not install software or modify your real HOME. Git ignores and Stow ignores are separate; both must exclude local Pi state.

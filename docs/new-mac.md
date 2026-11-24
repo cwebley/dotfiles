@@ -1,6 +1,6 @@
 # New Mac setup
 
-Personal checklist for an Apple Silicon Mac. macOS preferences, account logins and private files stay manual. Stow links configuration; it does not install applications. The Brewfile is an optional shortcut, not a requirement.
+Personal checklist for an Apple Silicon Mac. Account logins and private files stay manual. macOS preferences can be configured manually or with the optional helper below. Stow links configuration; it does not install applications. The Brewfile is an optional shortcut, not a requirement.
 
 Before leaving the old Mac, review the diff, run `python3 scripts/check-credentials.py`, and commit and push the intended changes. A fresh clone only receives pushed commits. Keep credentials, password databases, browser profiles and Pi sessions out of Git.
 
@@ -17,7 +17,9 @@ Before leaving the old Mac, review the diff, run `python3 scripts/check-credenti
 - Make the `passwords.kdbx` file available offline in Dropbox before opening it.
 - Download KeePassXC from https://keepassxc.org and open the password database yourself.
 
-These settings and accounts aren't restored by this repository. Don't paste passwords, tokens or recovery codes into an agent conversation.
+An optional [macOS preferences helper and acceptance checklist](macos-preferences.md) can apply key repeat, tap-to-click, Option-scroll zoom, Mission Control grouping and a selected keyboard mapping. Preview first after cloning and installing Python. It does not run during Stow or Homebrew setup, and its first real acceptance test is on the new Mac. Keep the manual steps above as the fallback. Dock cleanup and account setup remain manual.
+
+Don't paste passwords, tokens or recovery codes into an agent conversation.
 
 ## 2. Homebrew and terminal basics
 
@@ -102,6 +104,46 @@ The selected Stow set leaves out legacy `lvim` and machine-specific `misc` scrip
 
 Open a new terminal after linking shell configuration.
 
+### Optional: apply and test macOS preferences
+
+**This is a new, experimental script. Its preference-writing behavior has not yet been tested on a real setup. The new Mac is its first acceptance test.** Automated tests cover the helper's logic with fake preferences, not whether macOS honors the settings.
+
+Treat every group as an experiment: preview, apply only that group, verify each setting in System Settings and through actual behavior, and record the result before continuing. A successful command or read-back is not enough to mark a step as working. Use the manual instructions if a step fails or is unclear.
+
+You can use this instead of the corresponding manual settings in section 1. Start with a read-only preview:
+
+```sh
+cd "$HOME/dotfiles"
+python3 scripts/macos-preferences.py --show
+```
+
+Then apply **one group at a time**, completing its behavior checks before moving on:
+
+```sh
+python3 scripts/macos-preferences.py --apply trackpad
+python3 scripts/macos-preferences.py --apply zoom
+python3 scripts/macos-preferences.py --apply mission-control
+python3 scripts/macos-preferences.py --apply keyboard
+```
+
+The helper's storage baseline is macOS 15.7.7. On another release, it refuses writes unless you explicitly add `--allow-untested`. Review the preview and [helper documentation](macos-preferences.md) first. For example:
+
+```sh
+python3 scripts/macos-preferences.py --apply trackpad --allow-untested
+```
+
+The helper never restarts apps, logs you out, requests sudo or guesses a new keyboard ID. If the Caps Lock/Control mapping is skipped, use Modifier Keys in System Settings to configure your keyboard, then preview again. A failed Accessibility write should be handled manually, not by rerunning with sudo.
+
+For every group, distinguish these three checks:
+
+- [ ] **Storage:** the helper reports `STORED` or `NO CHANGE`, with no failure. This alone does not prove the setting works.
+- [ ] **Behavior:** test tap-to-click, Option-scroll screen zoom, Mission Control grouping, key repeat or the modifier swap as applicable.
+- [ ] **Persistence:** retest after a convenient normal restart, or trackpad reconnection if applicable. Mark anything not tried as not tested.
+
+**Complete the [per-setting acceptance checklist](macos-preferences.md#new-mac-acceptance-checklist).** It has the exact behavior tests, activation troubleshooting, backup/restore commands and instructions for committing fixes from this Mac back to the repo. Keep that page open while testing; no instructions from the original chat are needed.
+
+Each changing run prints a private backup path. Save that path locally. Don't commit the backups. Defer any logout or restart until convenient; the script does not require disrupting active sessions just to run.
+
 ## 5. Pi and private environment
 
 Install Node and Pi:
@@ -183,6 +225,7 @@ If you already have a private backup of all six patched fonts, install those ins
 ```sh
 cd "$HOME/dotfiles"
 python3 scripts/test-setup.py
+python3 -m unittest discover -s scripts/tests -v
 node pi/tests/researcher/run.mjs
 node pi/tests/researcher/load-live.mjs
 node --test pi/tests/subscription-footer/*.test.mjs pi/tests/subagent-pane-label/*.test.mjs pi/tests/prompt-snippets/lifecycle.test.mjs pi/tests/prompt-snippets/protocol.test.mjs
@@ -192,7 +235,7 @@ python3 scripts/check-credentials.py
 
 The credential check is pre-publication hygiene. It scans current tracked and non-ignored untracked source, prints findings without values, and doesn't stage or upload files. It doesn't scan ignored private state or Git history, and a clean result is not proof that every credential format is detectable.
 
-The automated tests use temporary homes or mocked network/authentication. Also check the actual workflow:
+The automated tests use temporary homes or mocked preferences/network/authentication. If using the optional macOS helper, complete its [per-setting acceptance checklist](macos-preferences.md#new-mac-acceptance-checklist) and note the macOS version and any activation steps needed. Also check the actual workflow:
 
 1. Start tmux, then Pi. Confirm the footer, prompt picker and subagent pane labels.
 2. Use `/plan-usage` after the optional Codex login.
