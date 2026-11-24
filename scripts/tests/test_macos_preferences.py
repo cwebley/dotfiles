@@ -85,15 +85,15 @@ class PreferencesTests(unittest.TestCase):
     def test_preview_only_reads(self):
         specs, notes = m.settings(self.backend)
         entries = m.snapshot(self.backend, specs)
-        self.assertEqual(len(entries), 9)
+        self.assertEqual(len(entries), 11)
         self.assertTrue(any('skipped' in note for note in notes))
         self.assertEqual(self.backend.writes, [])
         self.assertEqual(list(self.root.iterdir()), [])
 
-    def test_dock_autohide_repeat_and_restore_preserve_other_preferences(self):
+    def test_dock_cleanup_repeat_and_restore_preserve_other_preferences(self):
         original = {
             ('com.apple.dock', 'autohide-delay', False): 0.5,
-            ('com.apple.dock', 'persistent-apps', False): [{'tile-type': 'file-tile'}],
+            ('com.apple.dock', 'persistent-others', False): [{'tile-type': 'directory-tile'}],
             ('com.apple.dock', 'expose-group-apps', False): True,
         }
         for before in (None, False, True):
@@ -101,22 +101,24 @@ class PreferencesTests(unittest.TestCase):
                 self.backend.values = copy.deepcopy(original)
                 if before is not None:
                     self.backend.values[('com.apple.dock', 'autohide', False)] = before
+                    self.backend.values[('com.apple.dock', 'persistent-apps', False)] = [
+                        {'tile-type': 'file-tile', 'tile-data': {'file-label': 'Example'}}]
+                    self.backend.values[('com.apple.dock', 'show-recents', False)] = True
                 initial = copy.deepcopy(self.backend.values)
                 specs, _ = m.settings(self.backend)
                 dock = [s for s in specs if s['group'] == 'dock']
-                self.assertEqual(len(dock), 1)
+                self.assertEqual(len(dock), 3)
                 self.assertIn('dock', m.GROUPS)
                 errors, path = self.apply(dock)
                 self.assertEqual(errors, 0)
                 self.assertIs(self.backend.values[('com.apple.dock', 'autohide', False)], True)
+                self.assertEqual(self.backend.values[('com.apple.dock', 'persistent-apps', False)], [])
+                self.assertIs(self.backend.values[('com.apple.dock', 'show-recents', False)], False)
                 self.assertEqual(self.apply(dock), (0, None))
                 for key, value in original.items():
                     self.assertEqual(self.backend.values[key], value)
-                if before is True:
-                    self.assertIsNone(path)
-                else:
-                    self.assertIsNotNone(path)
-                    self.assertEqual(m.restore(self.backend, path), 0)
+                self.assertIsNotNone(path)
+                self.assertEqual(m.restore(self.backend, path), 0)
                 self.assertEqual(self.backend.values, initial)
 
     def test_existing_and_unset_restore_and_repeat(self):

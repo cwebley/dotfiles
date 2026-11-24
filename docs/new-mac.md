@@ -11,14 +11,13 @@ Before leaving the old Mac, review the diff, run `python3 scripts/check-credenti
 - Enable trackpad tap-to-click.
 - Enable the scroll gesture for zoom in Accessibility settings.
 - In Keyboard > Modifier Keys, swap Control and Caps Lock for each keyboard you use.
-- Enable Dock auto-hide, keeping normal reveal timing and Trash accessible. The optional helper's `dock` group handles auto-hide only.
-- Remove unwanted Dock items manually if desired.
+- Enable Dock auto-hide, clear pinned apps and hide recent-app suggestions. The optional helper's `dock` group does this while keeping Trash, stacks and existing reveal timing. Running apps can still appear.
 - Download Brave from https://brave.com and sign into Google.
 - Download Dropbox from https://www.dropbox.com/install and sign in.
 - Make the `passwords.kdbx` file available offline in Dropbox before opening it.
 - Download KeePassXC from https://keepassxc.org and open the password database yourself.
 
-An optional [macOS preferences helper and acceptance checklist](macos-preferences.md) can apply key repeat, tap-to-click, Option-scroll zoom, Mission Control grouping, Dock auto-hide and a selected keyboard mapping. Preview first after cloning and installing Python. It does not run during Stow or Homebrew setup. Key repeat and the native Caps Lock/Control swap have been confirmed on the new Mac after logout/login; trackpad, zoom and Mission Control still need acceptance testing. Keep the manual steps above as the fallback. Dock cleanup and account setup remain manual.
+An optional [macOS preferences helper and acceptance checklist](macos-preferences.md) can apply key repeat, tap-to-click, Option-scroll zoom, Mission Control grouping, Dock auto-hide and a selected keyboard mapping. Preview first after cloning and installing Python. It does not run during Stow or Homebrew setup. Key repeat and the native Caps Lock/Control swap have been confirmed on the new Mac after logout/login; trackpad, zoom and Mission Control still need acceptance testing. Keep the manual steps above as the fallback. The `dock` group clears all pinned apps, including custom pins, without uninstalling them. Account setup remains manual.
 
 Don't paste passwords, tokens or recovery codes into an agent conversation.
 

@@ -24,11 +24,11 @@ For each group: preview, apply only that group, check every setting in System Se
 | `trackpad` | Tap-to-click | On in built-in, Bluetooth and current-host preferences |
 | `zoom` | Scroll-to-zoom | On, with Option as the modifier |
 | `mission-control` | Group windows by application | On, following the AeroSpace workaround |
-| `dock` | Automatically hide and show the Dock | On; leave existing reveal timing and icons unchanged |
+| `dock` | Auto-hide, pinned apps, recent apps | Auto-hide on; clear pinned apps; hide recents; keep Trash, stacks and reveal timing |
 
 The faster `1`/`10` values are now the desired preferences. If they cause unwanted repeated letters, restore the original `2`/`15` values and log out/in when convenient. Desired values are defined by `KEY_REPEAT` and `INITIAL_KEY_REPEAT` in the script. Older script revisions still apply `2`/`15`; pull the updated revision before reapplying `keyboard` or `all`.
 
-No Dock app cleanup, automatic device watcher, account setup, sudo, permissions bypass, application restart or logout is included.
+Dock cleanup unpins apps only; it never uninstalls them. No automatic device watcher, account setup, sudo, permissions bypass, application restart or logout is included.
 
 ## Run it
 
@@ -170,9 +170,9 @@ New Mac result, macOS 27.2.1: the helper reported `STORED` for Group windows by 
 - [ ] Open several windows from the same app and enter Mission Control. Confirm the grouping and AeroSpace workaround behave as expected.
 - [ ] If the preference is stored but not active, restart the Dock only when convenient with `killall Dock`, then test again. The helper never does this automatically.
 
-### Dock auto-hide
+### Dock auto-hide and cleanup
 
-The `dock` group sets only `com.apple.dock autohide=true`. It does not remove pinned apps or Trash, alter reveal timing, or restart the Dock. On a fresh default Dock this keeps normal reveal timing; any existing custom timing remains unchanged. Like other groups, `dock` is included in `--apply all`, but never runs as part of Stow setup.
+The `dock` group sets `com.apple.dock autohide=true`, `persistent-apps=[]` and `show-recents=false`. This clears all pinned apps, including custom pins, and hides recent-app suggestions. It does not uninstall apps, remove Trash or Downloads/other stacks, alter reveal timing, or restart the Dock. Running apps can still appear. On a fresh default Dock this keeps normal reveal timing; any existing custom timing remains unchanged. Like other groups, `dock` is included in `--apply all`, but never runs as part of Stow setup. Review preview before applying; original pinned-app data is included in the private backup if changed.
 
 On the new Mac, preview first, then apply:
 
@@ -183,11 +183,11 @@ python3 scripts/macos-preferences.py --apply dock --allow-untested
 
 - [ ] Check for `STORED` or `NO CHANGE`; keep any printed backup path.
 - [ ] If needed, activate when convenient with `killall Dock`. It briefly restarts the Dock; the helper never does this automatically.
-- [ ] Confirm the Dock hides and reveals at its edge, with Trash still available and pinned icons unchanged.
+- [ ] Confirm the Dock hides and reveals at its edge, with pinned apps cleared and recent suggestions hidden. Running apps can remain; Trash and stacks should still be available.
 - [ ] Reapply and confirm no changes or new backup.
 - [ ] Confirm persistence after a convenient logout/restart.
 
-Implementation has fake-backend tests for apply, repeatability, restore from unset/false, and preservation of reveal delay, pinned apps and Mission Control grouping. New-Mac Dock behavior remains untested.
+Implementation has fake-backend tests for apply, repeatability, restoring original pinned-app arrays and originally unset values, and preservation of reveal delay, stacks and Mission Control grouping. The user confirmed the direct command to clear pinned apps worked on the new Mac; recent suggestions remained afterward. The helper's full Dock group and hiding recents still need new-Mac verification.
 
 ### Key repeat
 

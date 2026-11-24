@@ -143,6 +143,8 @@ def settings(backend, keyboard_key=None):
         setting('zoom', 'Zoom modifier: Option', 'com.apple.universalaccess', 'closeViewScrollWheelModifiersInt', 524288),
         setting('mission-control', 'Group windows by application', 'com.apple.dock', 'expose-group-apps', True),
         setting('dock', 'Automatically hide the Dock', 'com.apple.dock', 'autohide', True),
+        setting('dock', 'Pinned Dock apps', 'com.apple.dock', 'persistent-apps', []),
+        setting('dock', 'Show recent apps in the Dock', 'com.apple.dock', 'show-recents', False),
     ]
     notes = []
     try:
