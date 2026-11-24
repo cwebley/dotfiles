@@ -50,7 +50,7 @@ The licensed font is not bundled. If not installed yet, expect fallback text, no
 
 ## Verification status
 
-The temporary-home Stow test checks Ghostty linking and repeatability. This does not validate Ghostty's config parser or live macOS behavior. Ghostty is not installed on the old Mac used to make these changes, so parser validation and new-Mac acceptance remain pending.
+The temporary-home Stow test checks Ghostty linking and repeatability. On the old Mac, macOS 15.7.7, Ghostty 1.4.0 was then installed successfully through Homebrew into `~/Applications`, with auto-update and install cleanup disabled. Explicit config validation passed before linking; Stow simulation and apply succeeded; validation of the linked config also passed. `+show-config` confirmed the font, size, Option handling, window settings and all migrated bindings. Normal app launch returned successfully and a Ghostty process was observed running. The user then opened Ghostty, attached to an existing tmux session through their sessionizer, and reported the requested font/ligature, clipboard and Neovim checks looked good. Images remain unverified. None of these old-Mac results establishes new-Mac compatibility.
 
 - [ ] Homebrew installation and normal app launch succeed.
 - [ ] `+validate-config` succeeds with no diagnostics.
@@ -60,6 +60,25 @@ The temporary-home Stow test checks Ghostty linking and repeatability. This does
 - [ ] Newly opened Ghostty window lands on workspace 0.
 - [ ] Clipboard, colors, cursor changes and shortcuts work in tmux and Neovim.
 - [ ] Images work in the intended application both outside and inside tmux. Outer-terminal graphics support alone does not prove tmux compatibility.
+
+## Image smoke test
+
+`scripts/test-terminal-images.py` generates a small PNG and sends it using the Kitty graphics protocol. It uses only Python's standard library, downloads nothing and writes no files. Outside tmux it sends the sequence directly; inside tmux it adds a passthrough envelope. Fake-data tests check PNG structure, CRCs, dimensions, RGB pixels and packet size, not actual terminal display.
+
+First open a new Ghostty window outside tmux. `echo "$TMUX"` should be empty. Run:
+
+```sh
+python3 ~/dotfiles/scripts/test-terminal-images.py
+```
+
+Expect red, green and blue bars with a black/white strip below. Then, in the intended tmux pane, record `tmux show-options -pv allow-passthrough` and enable passthrough only for that pane:
+
+```sh
+tmux set-option -p allow-passthrough on
+python3 ~/dotfiles/scripts/test-terminal-images.py
+```
+
+This pane-local permission lets applications send escape sequences through tmux to the outer terminal. It does not change the dotfiles' global tmux configuration. Restore the original pane value if desired; `tmux set-option -pu allow-passthrough` removes the local override and returns to inherited behavior. One-shot display does not guarantee correct image scrolling, pane switching, redraw, or Neovim plugin support. Test those separately before choosing a permanent configuration.
 
 ## Sources
 
