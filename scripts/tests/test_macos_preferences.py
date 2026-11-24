@@ -24,6 +24,10 @@ class FakeDefaults:
         self.writes = []
         self.ignore_writes = False
         self.on_write = None
+        self.detected_keyboard = None
+
+    def keyboard_target(self):
+        return self.detected_keyboard
 
     @staticmethod
     def target(spec):
@@ -70,6 +74,12 @@ class PreferencesTests(unittest.TestCase):
 
     def apply(self, specs):
         return m.apply(self.backend, m.snapshot(self.backend, specs), m.BASELINE_VERSION, self.root)
+
+    def test_desired_repeat_values_match_accepted_faster_settings(self):
+        specs, _ = m.settings(self.backend)
+        values = {s['key']: s['desired'] for s in specs}
+        self.assertEqual(values['KeyRepeat'], 1)
+        self.assertEqual(values['InitialKeyRepeat'], 10)
 
     def test_preview_only_reads(self):
         specs, notes = m.settings(self.backend)
@@ -193,6 +203,57 @@ class PreferencesTests(unittest.TestCase):
         self.assertEqual(specs[-1]['key'], second)
         with self.assertRaises(m.PreferenceError):
             m.settings(self.backend, '-not-a-preference')
+
+    def test_fresh_recognized_mac_applies_both_repeat_and_native_swap(self):
+        key = m.MAPPING_PREFIX + '0-0-0'
+        self.backend.detected_keyboard = key
+        specs, _ = m.settings(self.backend)
+        keyboard = [s for s in specs if s['group'] == 'keyboard']
+        self.assertEqual(len(keyboard), 3)
+        errors, path = self.apply(keyboard)
+        self.assertEqual(errors, 0)
+        self.assertEqual(self.backend.values[(m.GLOBAL, 'KeyRepeat', False)], 1)
+        self.assertEqual(self.backend.values[(m.GLOBAL, 'InitialKeyRepeat', False)], 10)
+        self.assertEqual(self.backend.values[(m.GLOBAL, key, True)], m.swap_mapping([]))
+        self.assertEqual(self.apply(keyboard), (0, None))
+        self.assertEqual(m.restore(self.backend, path), 0)
+        self.assertEqual(self.backend.values, {})
+
+    def test_detected_builtin_does_not_overwrite_other_keyboard(self):
+        target = m.MAPPING_PREFIX + '0-0-0'
+        other = m.MAPPING_PREFIX + '1-2-3'
+        self.backend.detected_keyboard = target
+        self.backend.values[(m.GLOBAL, other, True)] = []
+        specs, _ = m.settings(self.backend)
+        mapping = [s for s in specs if s['key'].startswith(m.MAPPING_PREFIX)]
+        self.assertEqual([s['key'] for s in mapping], [target])
+        specs, _ = m.settings(self.backend, other)
+        self.assertEqual(specs[-1]['key'], other)
+
+    def test_hardware_discovery_requires_exact_recognized_device(self):
+        device = dict(IORegistryEntryName='AppleHIDKeyboardEventDriverV2',
+                      Product='Apple Internal Keyboard / Trackpad',
+                      VendorID=0, ProductID=0, LocationID=172, Transport='FIFO')
+        backend = m.Defaults()
+        cases = [([device], m.MAPPING_PREFIX + '0-0-0'),
+                 ([dict(device, LocationID=106)], m.MAPPING_PREFIX + '0-0-0'),
+                 ([dict(device, ProductID=123)], None),
+                 ([dict(device, Transport='USB')], None),
+                 ([device, device], None), ([], None)]
+        for devices, expected in cases:
+            with self.subTest(devices=devices), patch.object(m, 'run') as run:
+                run.return_value.returncode = 0
+                run.return_value.stdout = m.plistlib.dumps(devices).decode()
+                self.assertEqual(backend.keyboard_target(), expected)
+        with patch.object(m, 'run') as run:
+            run.return_value.returncode = 1
+            with self.assertRaises(m.PreferenceError):
+                backend.keyboard_target()
+        with patch.object(m, 'run') as run:
+            run.return_value.returncode = 0
+            run.return_value.stdout = 'not a plist'
+            with self.assertRaises(m.PreferenceError):
+                backend.keyboard_target()
 
     def test_defaults_command_types_and_host_scope(self):
         backend = m.Defaults()

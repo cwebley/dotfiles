@@ -26,7 +26,7 @@ The `git` package manages global ignore patterns only, not your identity or cred
 
 ## Optional macOS preferences
 
-`python3 scripts/macos-preferences.py --show` previews your saved preferences without changing anything. Explicit apply commands, backups, undo and the new-Mac behavior checks are in [macOS preferences helper and acceptance checklist](docs/macos-preferences.md). Stow and the Brewfile never run it. Preference storage was inspected on macOS 15.7.7; actual activation is still awaiting acceptance testing.
+`python3 scripts/macos-preferences.py --show` previews your saved preferences without changing anything. Explicit apply commands, backups, undo and the new-Mac behavior checks are in [macOS preferences helper and acceptance checklist](docs/macos-preferences.md). Stow and the Brewfile never run it. Preference storage was inspected on macOS 15.7.7. Key repeat at the preferred `1`/`10` values and the native Caps Lock/Control mapping were user-confirmed on macOS 27.2.1 after logout/login. Those live writes used `defaults`; full helper acceptance and the other groups remain to be tested.
 
 ## Setup checks
 

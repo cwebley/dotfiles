@@ -20,9 +20,10 @@ GROUPS = ('keyboard', 'trackpad', 'zoom', 'mission-control')
 GLOBAL = 'NSGlobalDomain'
 MAPPING_PREFIX = 'com.apple.keyboard.modifiermapping.'
 CAPS, LEFT_CONTROL, RIGHT_CONTROL = 0x700000039, 0x7000000E0, 0x7000000E4
-# Keep the original settings. The faster 1/10 experiment is not yet confirmed.
-KEY_REPEAT = 2
-INITIAL_KEY_REPEAT = 15
+# User verified 1/10 on macOS 27.2.1 after logout/login and prefers it.
+# This does not verify the other preference groups on that release.
+KEY_REPEAT = 1
+INITIAL_KEY_REPEAT = 10
 
 
 class PreferenceError(Exception):
@@ -48,6 +49,37 @@ class Defaults:
             return plistlib.loads(result.stdout.encode())
         except Exception as exc:
             raise PreferenceError(f'Cannot parse {domain} export') from exc
+
+    def keyboard_target(self):
+        """Recognize only the built-in device/target confirmed on both Macs."""
+        result = run(['/usr/sbin/ioreg', '-r', '-c',
+                      'AppleHIDKeyboardEventDriverV2', '-a'])
+        if result.returncode:
+            raise PreferenceError('Cannot inspect the built-in keyboard')
+        if not result.stdout.strip():
+            return None
+        try:
+            devices = plistlib.loads(result.stdout.encode())
+        except Exception as exc:
+            raise PreferenceError('Cannot parse built-in keyboard information') from exc
+        keyboards = []
+
+        def walk(items):
+            for item in items:
+                if item.get('IORegistryEntryName') == 'AppleHIDKeyboardEventDriverV2':
+                    keyboards.append(item)
+                walk(item.get('IORegistryEntryChildren', []))
+
+        walk(devices)
+        if len(keyboards) != 1:
+            return None
+        device = keyboards[0]
+        if (device.get('Product') == 'Apple Internal Keyboard / Trackpad' and
+                device.get('VendorID') == 0 and device.get('ProductID') == 0 and
+                device.get('Transport') == 'FIFO'):
+            # This exact target was tested, not calculated from LocationID.
+            return MAPPING_PREFIX + '0-0-0'
+        return None
 
     def read(self, spec):
         values = self.domain(spec['domain'], spec['host'])
@@ -113,13 +145,19 @@ def settings(backend, keyboard_key=None):
             if not re.fullmatch(re.escape(MAPPING_PREFIX) + r'\d+-\d+-\d+', keyboard_key):
                 raise PreferenceError('Invalid --keyboard-key; expected com.apple.keyboard.modifiermapping.N-N-N')
             key = keyboard_key
-        elif len(keys) == 1:
-            key = keys[0]
         else:
-            key = None
-            notes.append('Keyboard swap skipped: no unique existing host mapping. Set the swap in System Settings first, or pass a reviewed --keyboard-key. No device ID is guessed.')
-            if keys:
-                notes.append('Existing mapping keys: ' + ', '.join(keys))
+            detected = backend.keyboard_target()
+            if detected:
+                key = detected
+                notes.append('Recognized the tested built-in keyboard; its native mapping can be created automatically.')
+            elif len(keys) == 1:
+                key = keys[0]
+                notes.append('Using the unique existing native mapping; confirm it belongs to your keyboard.')
+            else:
+                key = None
+                notes.append('Keyboard swap skipped: no recognized built-in keyboard or unique existing mapping. Use a reviewed --keyboard-key or the manual fallback.')
+                if keys:
+                    notes.append('Existing mapping keys: ' + ', '.join(keys))
         if key:
             specs.append(setting('keyboard', 'Caps Lock / Control swap', GLOBAL, key,
                                  swap_mapping(values.get(key, [])), True))
@@ -226,6 +264,9 @@ def settings_without_mapping():
     class Empty:
         def domain(self, *args):
             return {}
+
+        def keyboard_target(self):
+            return None
     return settings(Empty())[0]
 
 

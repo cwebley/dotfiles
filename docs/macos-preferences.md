@@ -2,9 +2,13 @@
 
 This is an optional shortcut for the manual settings in [New Mac setup](new-mac.md). It is not part of Stow or the Brewfile and never runs automatically. The manual checklist remains the fallback.
 
-**This is a new, experimental script. The new Mac is its first real acceptance test. Every setting needs verification before it can be considered working.**
+**This is a new, experimental script. Key repeat and the native Caps Lock/Control mapping have been behavior-tested on the new Mac. Trackpad, zoom and Mission Control still need acceptance testing.**
 
-Preference storage was inspected on macOS **15.7.7**. Real preference writes and activation have **not** been acceptance-tested yet. The tests exercise fake preferences, not macOS behavior. A successful write/read-back is not proof that macOS or an app uses the value.
+Preference storage was inspected on macOS **15.7.7**. On **27.2.1**, the user confirmed key repeat at `2`/`15` after applying the helper and logging out/in, then confirmed the faster `1`/`10` values after a direct `defaults` write and another logout/login. The user prefers `1`/`10`, now the helper's defaults. Opening a fresh TextEdit window alone did not activate the first change. This is user-reported behavior verification, not an automated measurement or proof of compatibility for other groups.
+
+The user also confirmed the native Caps Lock/Control swap on 27.2.1 after writing the current-host key `com.apple.keyboard.modifiermapping.0-0-0`, clearing the temporary `hidutil` mapping, and logging out/in. This used the built-in Apple Internal Keyboard / Trackpad with reported vendor/product IDs `0`/`0`. No login task or LaunchAgent was installed. The native values match the helper's mapping; the live write was performed with `defaults`, not through the helper end to end. Other keyboards and persistence across a full reboot remain untested.
+
+The automated tests exercise fake preferences, not macOS behavior. A successful write/read-back is not proof that macOS or an app uses the value. The version guard remains unchanged because the other groups have not been verified on 27.2.1.
 
 For each group: preview, apply only that group, check every setting in System Settings and through actual behavior, record the result, then continue. Verify persistence after a convenient restart or reconnection. If a step fails or is unclear, use the manual checklist rather than assuming the script handled it.
 
@@ -12,14 +16,14 @@ For each group: preview, apply only that group, check every setting in System Se
 
 | Group | Setting | Desired value |
 |---|---|---|
-| `keyboard` | Repeat interval | `2` |
-| `keyboard` | Initial repeat delay | `15` |
-| `keyboard` | Caps Lock / Control | Full swap for one explicitly selected or uniquely stored keyboard mapping |
+| `keyboard` | Repeat interval | `1` |
+| `keyboard` | Initial repeat delay | `10` |
+| `keyboard` | Caps Lock / Control | Full native swap, automatically targeting the recognized built-in keyboard |
 | `trackpad` | Tap-to-click | On in built-in, Bluetooth and current-host preferences |
 | `zoom` | Scroll-to-zoom | On, with Option as the modifier |
 | `mission-control` | Group windows by application | On, following the AeroSpace workaround |
 
-The old Mac currently has the experimental repeat values `1` and `10` saved, but their effect was not confirmed. The helper deliberately retains the original `2` and `15` preferences. Applying `keyboard` there would restore those original values. Change `KEY_REPEAT` and `INITIAL_KEY_REPEAT` in the script only after deciding which behavior you prefer.
+The faster `1`/`10` values are now the desired preferences. If they cause unwanted repeated letters, restore the original `2`/`15` values and log out/in when convenient. Desired values are defined by `KEY_REPEAT` and `INITIAL_KEY_REPEAT` in the script. Older script revisions still apply `2`/`15`; pull the updated revision before reapplying `keyboard` or `all`.
 
 No Dock app cleanup, automatic device watcher, account setup, sudo, permissions bypass, application restart or logout is included.
 
@@ -52,11 +56,31 @@ This override does not establish compatibility or bypass macOS permissions. A de
 
 `STORED` means the requested value was written and read back. `NO CHANGE` means the stored value already matches. Neither means behavior was independently verified. Failures are reported per setting and other settings are still attempted; a partial failure returns a nonzero exit status. A skipped keyboard swap makes a keyboard/all apply incomplete.
 
-### Keyboard mapping limits
+### Automatic keyboard setup and its limits
 
-The script never guesses a new keyboard ID. If exactly one native modifier mapping already exists in the current-host preferences, it can update that mapping while preserving unrelated Command, Option, Globe and other source mappings. A stored mapping can refer to a disconnected keyboard; confirm it is the intended one in System Settings and with the behavior checks below.
+On a fresh Mac with the recognized built-in keyboard, one command sets both repeat at `1`/`10` and the persistent Caps Lock/Control swap:
 
-If there is no mapping yet on the new Mac, the simplest first setup is manual:
+```sh
+python3 scripts/macos-preferences.py --apply keyboard --allow-untested
+```
+
+No prior mapping, manual System Settings change, hardware-ID argument or login task is needed. Log out/in afterward, then test repeat and the swap. This writes the same native mapping confirmed during the new-Mac test; the automatic detection plus helper write still needs end-to-end acceptance testing there.
+
+Detection uses the exact observed `AppleHIDKeyboardEventDriverV2` device with product `Apple Internal Keyboard / Trackpad`, vendor/product IDs `0`/`0` and `FIFO` transport. It requires exactly one such driver entry. The native `0-0-0` target is a tested association, not a formula based on LocationID or a universal rule for all keyboards. Other native keyboard mappings and unrelated Command, Option and Globe source mappings are preserved.
+
+An explicit `--keyboard-key` takes priority. Otherwise the recognized built-in target is preferred. If hardware isn't recognized, the script can use a unique existing native mapping, with a warning to confirm it belongs to your keyboard. If neither is available, it reports the swap as skipped and the apply as incomplete rather than claiming success. A stored mapping can refer to a disconnected keyboard.
+
+For troubleshooting, explicit target selection remains available:
+
+```sh
+key=com.apple.keyboard.modifiermapping.0-0-0
+python3 scripts/macos-preferences.py --apply keyboard \
+  --keyboard-key "$key" --allow-untested
+```
+
+Pull the updated script first so it includes automatic detection and retains the preferred `1`/`10` repeat values. After writing a native mapping, log out/in when convenient and test the swap. Clear any temporary `hidutil` mapping before the test so it cannot mask the result. The helper writes native preferences only; it never installs a login task.
+
+Do not assume this target works for another keyboard just from its vendor/product IDs. For an unverified device, investigate its native target or use the manual fallback:
 
 1. Open Keyboard > Keyboard Shortcuts > Modifier Keys, or the equivalent page on that macOS version.
 2. Select your keyboard.
@@ -70,7 +94,7 @@ With multiple stored mappings, choose one only after inspecting the available ke
 python3 scripts/macos-preferences.py --apply keyboard --keyboard-key com.apple.keyboard.modifiermapping.VENDOR-PRODUCT-INDEX
 ```
 
-Replace the entire placeholder with a reviewed numeric key. Do not copy the old Mac's `0-0-0` key just because it worked there. Other or newly connected keyboards are not guaranteed to inherit the swap. If selecting a mapping is unclear, keep this step manual.
+Replace the entire placeholder with a reviewed numeric key. The tested `0-0-0` target applies to the specific built-in keyboard described above, not every Mac or external keyboard. Other or newly connected keyboards are not guaranteed to inherit the swap. If selecting a mapping is unclear, keep this step manual.
 
 ## Backups and undo
 
@@ -108,7 +132,7 @@ Failures or manual fallbacks:
 ### Before applying
 
 - [ ] Pull the intended dotfiles revision and read the preview.
-- [ ] Confirm desired repeat values are still `2` and `15`, or deliberately edit them.
+- [ ] Confirm desired repeat values are `1` and `10`, or deliberately edit them. The less aggressive fallback is `2` and `15`.
 - [ ] On an unfamiliar macOS release, review each group before using `--allow-untested`.
 - [ ] Save any unrelated work before deliberately testing keyboard behavior. No logout is required just to run the helper.
 - [ ] Choose only one group for the first apply; note the backup path it prints.
@@ -143,10 +167,12 @@ Failures or manual fallbacks:
 - [ ] Check another app, including Alacritty, because apps can handle repeat differently.
 - [ ] If unchanged, quit/reopen the affected app. Defer logout/login or reboot until convenient; don't disrupt working terminal sessions just to test.
 - [ ] After the next normal logout/restart, retest and record whether that was required.
-- [ ] If trying the faster `1`/`10` values later, check for unwanted repeated letters during normal typing before adopting them in Git.
+- [ ] With the faster `1`/`10` defaults, check for unwanted repeated letters during normal typing. Use `2`/`15` if they are too sensitive.
 
 ### Caps Lock / Control swap
 
+- [ ] On a fresh Mac, confirm preview detects the built-in keyboard and proposes creating its native mapping without manual setup.
+- [ ] Apply `keyboard`; confirm both repeat settings and the native mapping are stored with no skipped swap.
 - [ ] Confirm the correct keyboard is selected in Modifier Keys settings.
 - [ ] Confirm Caps Lock is assigned Control and Control is assigned Caps Lock. Other modifiers should remain unchanged.
 - [ ] In a disposable TextEdit document, hold physical Caps Lock and press A. Confirm it behaves like Control+A, moving to the beginning of the line, rather than Command+A.

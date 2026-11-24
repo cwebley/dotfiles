@@ -17,7 +17,7 @@ Before leaving the old Mac, review the diff, run `python3 scripts/check-credenti
 - Make the `passwords.kdbx` file available offline in Dropbox before opening it.
 - Download KeePassXC from https://keepassxc.org and open the password database yourself.
 
-An optional [macOS preferences helper and acceptance checklist](macos-preferences.md) can apply key repeat, tap-to-click, Option-scroll zoom, Mission Control grouping and a selected keyboard mapping. Preview first after cloning and installing Python. It does not run during Stow or Homebrew setup, and its first real acceptance test is on the new Mac. Keep the manual steps above as the fallback. Dock cleanup and account setup remain manual.
+An optional [macOS preferences helper and acceptance checklist](macos-preferences.md) can apply key repeat, tap-to-click, Option-scroll zoom, Mission Control grouping and a selected keyboard mapping. Preview first after cloning and installing Python. It does not run during Stow or Homebrew setup. Key repeat and the native Caps Lock/Control swap have been confirmed on the new Mac after logout/login; trackpad, zoom and Mission Control still need acceptance testing. Keep the manual steps above as the fallback. Dock cleanup and account setup remain manual.
 
 Don't paste passwords, tokens or recovery codes into an agent conversation.
 
@@ -106,7 +106,7 @@ Open a new terminal after linking shell configuration.
 
 ### Optional: apply and test macOS preferences
 
-**This is a new, experimental script. Its preference-writing behavior has not yet been tested on a real setup. The new Mac is its first acceptance test.** Automated tests cover the helper's logic with fake preferences, not whether macOS honors the settings.
+**This is a new, experimental script. Key repeat and the native Caps Lock/Control swap have been behavior-confirmed on the new Mac.** On macOS 27.2.1, `2`/`15` worked after logout/login, and the user then confirmed and preferred the faster `1`/`10` values, now the script defaults. A newly opened app alone did not activate the first change. The native `0-0-0` modifier mapping also worked after clearing the temporary `hidutil` swap and logging out/in, with no login task installed. Those live native writes used `defaults`; the helper still needs end-to-end acceptance testing. Trackpad, zoom and Mission Control remain unverified. Automated tests cover the helper's logic with fake preferences, not whether macOS honors the settings.
 
 Treat every group as an experiment: preview, apply only that group, verify each setting in System Settings and through actual behavior, and record the result before continuing. A successful command or read-back is not enough to mark a step as working. Use the manual instructions if a step fails or is unclear.
 
@@ -132,7 +132,9 @@ The helper's storage baseline is macOS 15.7.7. On another release, it refuses wr
 python3 scripts/macos-preferences.py --apply trackpad --allow-untested
 ```
 
-The helper never restarts apps, logs you out, requests sudo or guesses a new keyboard ID. If the Caps Lock/Control mapping is skipped, use Modifier Keys in System Settings to configure your keyboard, then preview again. A failed Accessibility write should be handled manually, not by rerunning with sudo.
+The `keyboard` group automatically recognizes the tested built-in keyboard and sets both the faster `1`/`10` repeat values and the persistent Caps Lock/Control swap, even with no existing mapping. No manual modifier setup, keyboard-ID argument or login task is needed on that hardware. Log out/in afterward to activate and test the native preferences.
+
+The helper never restarts apps, logs you out, requests sudo or guesses unfamiliar hardware targets. If the swap is skipped, the command reports incomplete setup. See [automatic keyboard setup and limits](macos-preferences.md#automatic-keyboard-setup-and-its-limits) for detection details and explicit selection. Manual configuration in Modifier Keys remains a fallback for unrecognized keyboards. A failed Accessibility write should be handled manually, not by rerunning with sudo.
 
 For every group, distinguish these three checks:
 
