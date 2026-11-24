@@ -44,7 +44,7 @@ The source is `alacritty/.config/alacritty/alacritty.toml`, not its legacy YAML 
 | Option+H/J/K/L send Escape plus letter | Explicit `esc:` bindings |
 | Command+Option+Space sends a nonbreaking space | Explicit UTF-8 byte binding |
 
-Ligatures remain enabled through Ghostty's defaults and require a supporting font. After the first comparison on the old Mac, the user found Ghostty's default colors washed out compared with Alacritty. The managed config now explicitly sets Alacritty's default background `#181818`, foreground `#d8d8d8` and 16-color palette. These defaults were implicit in the old Alacritty config. No named theme, automatic tmux launch, or terminal split/tab workflow was added. AeroSpace still intercepts its global Option+H/J/K/L shortcuts before terminal bindings when enabled. Its Ghostty app-ID rule places newly detected windows on workspace 0, alongside the retained Alacritty rule.
+Ligatures remain enabled through Ghostty's defaults and require a supporting font. After the first comparison on the old Mac, the user found Ghostty's default colors washed out compared with Alacritty. The managed config now explicitly sets Alacritty's default background `#181818`, foreground `#d8d8d8` and 16-color palette. These defaults were implicit in the old Alacritty config. The user reloaded this palette on the old Mac and confirmed the colors look great. No named theme, automatic tmux launch, or terminal split/tab workflow was added. AeroSpace still intercepts its global Option+H/J/K/L shortcuts before terminal bindings when enabled. Its Ghostty app-ID rule places newly detected windows on workspace 0, alongside the retained Alacritty rule.
 
 The licensed font is not bundled. If not installed yet, expect fallback text, not an exact visual match. Ghostty's built-in Nerd Font fallback also permits using an unpatched Comic Code Ligatures family later, after verifying its installed family name.
 
@@ -63,7 +63,7 @@ The temporary-home Stow test checks Ghostty linking and repeatability. On the ol
 
 ## Clipboard images in Pi
 
-Command+V invokes Ghostty's terminal clipboard action and is not the same as Pi's image-paste action. Pi 1.6.0 documents `app.clipboard.pasteImage` as Control+V on macOS. With the user's native modifier swap, physical Caps Lock+V sends Control+V. Test that in Pi with a screenshot on the clipboard. Do not globally remap Command+V to Control+V, since that would change paste behavior in other terminal applications. The user reported Command+V did not attach an image in Ghostty; Control+V verification is pending.
+Command+V invokes Ghostty's terminal clipboard action and is not the same as Pi's image-paste action. Pi 1.6.0 documents `app.clipboard.pasteImage` as Control+V on macOS. With the user's native modifier swap, physical Caps Lock+V sends Control+V. Test that in Pi with a screenshot on the clipboard. Do not globally remap Command+V to Control+V, since that would change paste behavior in other terminal applications. The user reported neither Command+V nor Control+V attached clipboard images in Ghostty, while image paste still worked through Alacritty attached to the same tmux session. Text paste with Control+V worked in Ghostty. Cause remains unresolved. `scripts/probe-terminal-key.py` captures a single keypress in a spare interactive shell pane, without reading the clipboard, to distinguish the input encodings. This diagnostic restores terminal mode and has a 10-second initial timeout.
 
 ## Image smoke test
 
