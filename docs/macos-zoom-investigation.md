@@ -23,7 +23,9 @@ This is therefore not a verified solution for automating both required controls.
 
 `scripts/probe-zoom-preferences.py` uses Python ctypes to call Apple's CoreFoundation CFPreferences API without invoking defaults. By default it only reads. With `--probe-write`, it requires both existing values to match the working configuration, rechecks them, then submits those same values and reports the synchronize result. It does not deliberately alter zoom behavior or request permissions.
 
-Read-only execution passed on the old Mac. The 22 existing helper tests still pass; they do not test this native probe. No write probe has been run on either Mac yet. A successful same-value synchronize may be a no-op, so it would not establish permission to change settings. A failure would show that this native synchronize attempt fails outside the defaults executable too. Neither result alone identifies the access-control mechanism.
+Read-only execution passed on the old Mac. On the new Mac, the user ran `--probe-write`: both values matched and `CFPreferencesAppSynchronize` returned True. A successful same-value synchronize may be a no-op, so this does not establish permission to change settings or identify the access-control mechanism.
+
+The user approved a real reversible test. The added `--test-toggle` mode requires the existing desired values, briefly writes scroll zoom off through CFPreferences, reads it using a separate defaults process, and attempts to restore it to on in a finally block. It then verifies restoration with another separate-process read. The modifier is not written. Force-killing the process or rejected restoration could require manual recovery in System Settings. This real-change test has not yet run on the new Mac. Fake-callback tests cover successful restoration and restoration attempts after write/read failures; they do not establish macOS compatibility.
 
 ## Remaining questions
 
