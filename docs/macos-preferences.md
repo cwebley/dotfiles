@@ -8,7 +8,7 @@ Preference storage was inspected on macOS **15.7.7**. On **27.2.1**, the user co
 
 The user also confirmed the native Caps Lock/Control swap on 27.2.1 after writing the current-host key `com.apple.keyboard.modifiermapping.0-0-0`, clearing the temporary `hidutil` mapping, and logging out/in. This used the built-in Apple Internal Keyboard / Trackpad with reported vendor/product IDs `0`/`0`. No login task or LaunchAgent was installed. The native values match the helper's mapping; the live write was performed with `defaults`, not through the helper end to end. Other keyboards and persistence across a full reboot remain untested.
 
-The updated helper's read-only preview on the new Mac at `51cc1bd` correctly recognized the built-in keyboard and reported repeat `1`/`10` as `NO CHANGE`. It incorrectly proposed rewriting the already-correct native swap because the stored array listed Caps Lock before left Control. The helper now preserves an already-correct mapping array regardless of entry order. Regression tests cover all entry permutations with an unrelated mapping, with no writes or backups. The corrected helper still needs preview and no-change apply verification on the new Mac; no apply was reported from that preview.
+The updated helper's read-only preview on the new Mac at `51cc1bd` correctly recognized the built-in keyboard and reported repeat `1`/`10` as `NO CHANGE`. It incorrectly proposed rewriting the already-correct native swap because the stored array listed Caps Lock before left Control. The helper now preserves an already-correct mapping array regardless of entry order. Regression tests cover all entry permutations with an unrelated mapping, with no writes or backups. At `ac86640`, the user then ran both preview and `--apply keyboard --allow-untested` on the new Mac. Both reported `NO CHANGE` for all three keyboard settings; apply reported `No writable settings need changing.` This confirms recognition and no-change apply on that Mac, not a fresh helper write. No backup path was printed and no apps were restarted.
 
 The automated tests exercise fake preferences, not macOS behavior. A successful write/read-back is not proof that macOS or an app uses the value. The version guard remains unchanged because the other groups have not been verified on 27.2.1.
 
@@ -141,6 +141,8 @@ Failures or manual fallbacks:
 
 ### Tap-to-click
 
+New Mac result, macOS 27.2.1: after applying the trackpad group, the user reported Tap to click enabled in System Settings but tapping did not click. After logout/login, the user confirmed it works. Built-in behavior and persistence across that logout/login are confirmed. Apply output and backup path were not supplied, so individual write results are not recorded. External trackpad behavior and full reboot persistence remain untested.
+
 - [ ] Apply `trackpad`; check for failed writes.
 - [ ] In Trackpad settings, confirm Tap to click is enabled.
 - [ ] Lightly tap the built-in trackpad on a harmless button or file. It should click without pressing the trackpad down.
@@ -149,6 +151,8 @@ Failures or manual fallbacks:
 
 ### Option-scroll zoom
 
+New Mac result, macOS 27.2.1: `--apply zoom --allow-untested` failed for both `closeViewScrollWheelToggle` and `closeViewScrollWheelModifiersInt`; each defaults write exited 1. The helper printed a private backup path. A subsequent direct `defaults write com.apple.universalaccess closeViewScrollWheelToggle -bool true` also failed with `Could not write domain com.apple.universalaccess; exiting`. The failure is therefore reproducible outside the helper, but the exact restriction is not established. The user subsequently enabled scroll zoom and selected Option in System Settings, confirmed zoom works, and read back `closeViewScrollWheelToggle=1` and `closeViewScrollWheelModifiersInt=524288`. A later helper preview reported `NO CHANGE` for both zoom settings and all other settings. Thus the keys, desired values, read path and manual behavior are confirmed; automated writes remain failed and zoom persistence across logout/reboot remains untested. Console diagnostics required admin access, so denial logs were not collected. File metadata showed user ownership, mode 600, no flags or ACL entries, and `com.apple.macl` / `com.apple.quarantine` attributes. These do not establish the exact cause. No elevated permissions or attribute changes were attempted.
+
 - [ ] Apply `zoom`; check for denied or failed writes.
 - [ ] In Accessibility > Zoom, confirm the scroll gesture is enabled and the modifier is Option.
 - [ ] Hold Option and scroll up/down. Confirm screen zoom changes, rather than only an app's text size.
@@ -156,6 +160,8 @@ Failures or manual fallbacks:
 - [ ] If it fails, use the manual settings. Record whether the helper stored values that macOS ignored. Do not bypass permissions.
 
 ### Mission Control / AeroSpace
+
+New Mac result, macOS 27.2.1: the helper reported `STORED` for Group windows by application and printed a private backup path. The user then confirmed grouping works. Whether a Dock restart was used was not specified. Persistence after logout or reboot and AeroSpace-specific behavior remain untested.
 
 - [ ] Apply `mission-control`; check read-back.
 - [ ] In Desktop & Dock, confirm Group windows by application is enabled.
