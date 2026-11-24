@@ -119,11 +119,17 @@ def swap_mapping(existing):
     sources = {CAPS, LEFT_CONTROL, RIGHT_CONTROL}
     # Preserve mappings for Command, Option, Globe and every unrelated source.
     kept = [x for x in existing if x.get('HIDKeyboardModifierMappingSrc') not in sources]
-    return kept + [
+    desired = [
         {'HIDKeyboardModifierMappingSrc': LEFT_CONTROL, 'HIDKeyboardModifierMappingDst': CAPS},
         {'HIDKeyboardModifierMappingSrc': CAPS, 'HIDKeyboardModifierMappingDst': RIGHT_CONTROL},
         {'HIDKeyboardModifierMappingSrc': RIGHT_CONTROL, 'HIDKeyboardModifierMappingDst': CAPS},
     ]
+    relevant = [x for x in existing if x.get('HIDKeyboardModifierMappingSrc') in sources]
+    # Unique source mappings have no ordering dependency. Preserve an already
+    # correct array verbatim so preview/apply won't rewrite it just to reorder it.
+    if len(relevant) == len(desired) and all(x in relevant for x in desired):
+        return existing
+    return kept + desired
 
 
 def settings(backend, keyboard_key=None):

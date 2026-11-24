@@ -4,6 +4,7 @@ import contextlib
 import copy
 import importlib.util
 import io
+import itertools
 import json
 from pathlib import Path
 import tempfile
@@ -189,6 +190,38 @@ class PreferencesTests(unittest.TestCase):
         self.assertNotIn(old_caps, result)
         self.assertEqual(len(result), 4)
         self.assertEqual(m.swap_mapping(result), result)
+
+    def test_correct_mapping_order_never_causes_writes_or_backups(self):
+        key = m.MAPPING_PREFIX + '0-0-0'
+        self.backend.detected_keyboard = key
+        self.backend.values[(m.GLOBAL, 'KeyRepeat', False)] = 1
+        self.backend.values[(m.GLOBAL, 'InitialKeyRepeat', False)] = 10
+        unrelated = {'HIDKeyboardModifierMappingSrc': 0x7000000E3,
+                     'HIDKeyboardModifierMappingDst': 0x7000000E2}
+        # Covers the user's Caps/left Control/right Control order, plus all
+        # permutations with an unrelated mapping interspersed.
+        orders = itertools.chain(itertools.permutations(m.swap_mapping([])),
+                                 itertools.permutations(m.swap_mapping([]) + [unrelated]))
+        for order in orders:
+            with self.subTest(order=order):
+                existing = list(order)
+                self.backend.values[(m.GLOBAL, key, True)] = existing
+                specs, _ = m.settings(self.backend)
+                keyboard = [s for s in specs if s['group'] == 'keyboard']
+                entries = m.snapshot(self.backend, keyboard)
+                self.assertTrue(all(m.matches(e['before'], e['spec']['desired'])
+                                    for e in entries))
+                self.assertEqual(self.apply(keyboard), (0, None))
+                self.assertEqual(self.backend.values[(m.GLOBAL, key, True)], existing)
+        self.assertEqual(self.backend.writes, [])
+        self.assertEqual(list(self.root.iterdir()), [])
+
+    def test_duplicate_or_incorrect_swap_entries_are_repaired(self):
+        desired = m.swap_mapping([])
+        self.assertEqual(m.swap_mapping(desired + [desired[0]]), desired)
+        wrong = copy.deepcopy(desired)
+        wrong[0]['HIDKeyboardModifierMappingDst'] = m.LEFT_CONTROL
+        self.assertEqual(m.swap_mapping(wrong), desired)
 
     def test_unique_existing_mapping_or_explicit_key_only(self):
         key = m.MAPPING_PREFIX + '0-0-0'
