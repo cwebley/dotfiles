@@ -74,7 +74,7 @@ brew install --cask nikitabobko/tap/aerospace
 brew install fd lazygit python zsh-autosuggestions zsh-syntax-highlighting gitleaks
 ```
 
-Alternatively, from `~/dotfiles`, `brew bundle --file=Brewfile` covers these tools and the earlier Homebrew tools, plus Discord and FontForge used below. Homebrew packages aren't version-locked. The Brewfile doesn't install Brave, Dropbox, KeePassXC, Docker or Adobe apps.
+Alternatively, from `~/dotfiles`, `brew bundle --file=Brewfile` covers these tools and the earlier Homebrew tools, plus FontForge used below. Discord is an optional personal-machine install, excluded from the Brewfile. Homebrew packages aren't version-locked. The Brewfile doesn't install Brave, Dropbox, KeePassXC, Docker or Adobe apps.
 
 If Homebrew requires tap trust for AeroSpace, review the source and trust only that cask with `brew trust --cask nikitabobko/tap/aerospace`. Don't grant whole-tap trust just to silence a warning. Older Homebrew releases may not have this trust command.
 
@@ -200,7 +200,7 @@ Use the same account and workspace as Pi, completing authentication yourself. Wi
 - Open AeroSpace and grant Accessibility permission in System Settings.
 - Enable Mission Control > Group windows by application in Desktop & Dock settings for your AeroSpace workflow. Exact settings names can vary by macOS version.
 - Install Docker Desktop from https://www.docker.com/products/docker-desktop/ and sign in with Google. Review its license for the intended use.
-- Run `brew install --cask discord` if you didn't use the Brewfile, then sign in.
+- Personal machines only, optional: `brew install --cask discord`, then sign in. Discord is excluded from the shared Brewfile and isn't wanted on the company Mac.
 - Install Adobe Illustrator through Adobe Creative Cloud and sign in.
 - Open Neovim and let LazyVim install its locked plugins. Language servers and language runtimes may need separate installs.
 

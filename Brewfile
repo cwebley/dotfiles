@@ -19,4 +19,3 @@ brew "fontforge"
 
 cask "alacritty"
 cask "nikitabobko/tap/aerospace"
-cask "discord"
