@@ -1,9 +1,12 @@
 # add custom scripts to path
 export PATH="$HOME/.local/bin:$PATH"
-export PATH="$N_PREFIX/bin:$PATH"
+[[ -n "${N_PREFIX:-}" ]] && export PATH="$N_PREFIX/bin:$PATH"
+export PATH="$HOME/.pi/agent/bin:$PATH"
 
 # run tmux-sessionizer script while outside of vim
 bindkey -s ^f "tmux-sessionizer\n"
+
+# Private environment variables are loaded once by ~/.zshenv.
 
 # run startup script--start limelight
 # startup.sh

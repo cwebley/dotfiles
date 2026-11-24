@@ -1,13 +1,17 @@
 # Dotfiles
 
-Configuration managed with GNU Stow. Clone this repository at `~/dotfiles` and install selected packages:
+Configuration managed with GNU Stow. For a fresh Apple Silicon Mac, follow [New Mac setup](docs/new-mac.md), including Homebrew, Pi dependencies, private environment and login steps.
+
+Clone this repository at `~/dotfiles` and install selected packages:
 
 ```sh
 cd ~/dotfiles
-./setup.sh nvim zsh tmux alacritty aerospace pi agent-skills
+./setup.sh nvim zsh tmux alacritty aerospace lazygit git pi agent-skills
 ```
 
 Run `./setup.sh` without package names for the full default set, including lvim and misc. The script uses `--restow --no-folding` and targets HOME explicitly. Preview the same operation with `./setup.sh --simulate pi agent-skills`. Never use `--adopt` to overwrite source with unknown home-directory state.
+
+The `git` package manages global ignore patterns only, not your identity or credentials. Git uses `~/.config/git/ignore` by default unless `core.excludesFile` overrides it. `Brewfile` is an optional shortcut for the checklist's Homebrew installs; Stow itself does not install software.
 
 ## Pi and shared skills
 
@@ -18,7 +22,15 @@ Run `./setup.sh` without package names for the full default set, including lvim 
 
 ## Private shell environment
 
-`zsh/.zshrc` sources `~/.zsh_secrets` when it exists. That private file is outside this repository and ignored if accidentally copied inside it. Keep it mode 600 and configure secret values privately. Commit the loader in `.zshrc`, never the private file. Environment changes require starting Pi from a shell that inherited them.
+`zsh/.zshenv` sources `~/.zsh_secrets` for interactive and non-interactive zsh. That private file is outside this repository and ignored if accidentally copied inside it. Keep it mode 600 and limited to environment assignments. Commit the loader, never the private file. Open a new shell and start Pi from it after changing private values.
+
+## Setup checks
+
+```sh
+python3 scripts/test-setup.py
+```
+
+This checks a fresh install, repeated Stow runs with private/runtime state present, private environment loading and conflict preservation in a temporary HOME. It does not install software or modify your real HOME. Git ignores and Stow ignores are separate; both must exclude local Pi state.
 
 ## Before committing
 

@@ -1,0 +1,4 @@
+# Do not install editor backups as shell configuration.
+(^|/)\.stow-local-ignore$
+.*~
+.*\.sw[op]

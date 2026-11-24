@@ -2,7 +2,13 @@
 export EDITOR="nvim"
 # export N_PREFIX="$HOME/n"
 
-eval "$(fnm env --use-on-cd --version-file-strategy=recursive --shell zsh)"
+# Also support non-login interactive shells on a fresh Mac.
+if ! command -v brew >/dev/null 2>&1; then
+  [[ -r "$HOME/.zprofile" ]] && source "$HOME/.zprofile"
+fi
+if command -v fnm >/dev/null 2>&1; then
+  eval "$(fnm env --use-on-cd --version-file-strategy=recursive --shell zsh)"
+fi
 
 # this needs to precede /usr/local/bin if there is another node install there.
 # export PATH="$N_PREFIX/bin:$PATH"
@@ -68,7 +74,9 @@ set_prompt() {
 
 precmd_functions+=(set_prompt)
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+if command -v fzf >/dev/null 2>&1; then
+  source <(fzf --zsh)
+fi
 export FZF_DEFAULT_COMMAND='fd --type file'
 export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
 
@@ -109,11 +117,15 @@ alias v="nvim"
 #alias t="./.tmux"
 
 # zsh-autosuggestions
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+if command -v brew >/dev/null 2>&1; then
+  _brew_prefix="$(brew --prefix)"
+  [[ -r "$_brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh" ]] &&
+    source "$_brew_prefix/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
+fi
 
 
 # syntax highlighting needs to be at the end
-source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# Loaded at the end of this file, after keybindings.
 
 # (removed 3x duplicate /usr/local/opt/ruby/bin export -- see Ruby note above)
 
@@ -128,17 +140,19 @@ source /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 source ~/.zsh_profile
 
-# Private environment variables, kept outside the dotfiles repository.
-[[ -f "$HOME/.zsh_secrets" ]] && source "$HOME/.zsh_secrets"
+# Private environment variables are loaded by ~/.zshenv for all zsh launches.
 
 # opencode
-export PATH=/Users/cwebley/.opencode/bin:$PATH
+[[ -d "$HOME/.opencode/bin" ]] && export PATH="$HOME/.opencode/bin:$PATH"
 
 # bun completions
-[ -s "/Users/cwebley/.bun/_bun" ] && source "/Users/cwebley/.bun/_bun"
+[[ -s "$HOME/.bun/_bun" ]] && source "$HOME/.bun/_bun"
 
 # bun
 export BUN_INSTALL="$HOME/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-
+if [[ -n "${_brew_prefix:-}" && -r "$_brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
+  source "$_brew_prefix/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
+fi
+unset _brew_prefix

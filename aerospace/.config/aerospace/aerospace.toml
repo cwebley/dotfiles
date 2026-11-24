@@ -130,7 +130,7 @@ alt-n = 'workspace N'
 alt-o = 'workspace O'
 alt-p = 'workspace P'
 alt-q = 'workspace Q'
-alt-r = 'exec-and-forget /opt/homebrew/bin/tmux run-shell -b "/Users/cwebley/.local/bin/trailmix toggle >/dev/null"'
+alt-r = 'exec-and-forget /opt/homebrew/bin/tmux run-shell -b "$HOME/.local/bin/trailmix toggle >/dev/null"'
 # Reserved for Pi prompt snippets (Option+S).
 # alt-s = 'workspace S'
 alt-t = 'workspace T'
