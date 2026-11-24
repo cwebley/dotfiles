@@ -11,13 +11,14 @@ Before leaving the old Mac, review the diff, run `python3 scripts/check-credenti
 - Enable trackpad tap-to-click.
 - Enable the scroll gesture for zoom in Accessibility settings.
 - In Keyboard > Modifier Keys, swap Control and Caps Lock for each keyboard you use.
-- Remove unwanted Dock items.
+- Enable Dock auto-hide, keeping normal reveal timing and Trash accessible. The optional helper's `dock` group handles auto-hide only.
+- Remove unwanted Dock items manually if desired.
 - Download Brave from https://brave.com and sign into Google.
 - Download Dropbox from https://www.dropbox.com/install and sign in.
 - Make the `passwords.kdbx` file available offline in Dropbox before opening it.
 - Download KeePassXC from https://keepassxc.org and open the password database yourself.
 
-An optional [macOS preferences helper and acceptance checklist](macos-preferences.md) can apply key repeat, tap-to-click, Option-scroll zoom, Mission Control grouping and a selected keyboard mapping. Preview first after cloning and installing Python. It does not run during Stow or Homebrew setup. Key repeat and the native Caps Lock/Control swap have been confirmed on the new Mac after logout/login; trackpad, zoom and Mission Control still need acceptance testing. Keep the manual steps above as the fallback. Dock cleanup and account setup remain manual.
+An optional [macOS preferences helper and acceptance checklist](macos-preferences.md) can apply key repeat, tap-to-click, Option-scroll zoom, Mission Control grouping, Dock auto-hide and a selected keyboard mapping. Preview first after cloning and installing Python. It does not run during Stow or Homebrew setup. Key repeat and the native Caps Lock/Control swap have been confirmed on the new Mac after logout/login; trackpad, zoom and Mission Control still need acceptance testing. Keep the manual steps above as the fallback. Dock cleanup and account setup remain manual.
 
 Don't paste passwords, tokens or recovery codes into an agent conversation.
 
@@ -123,6 +124,7 @@ Then apply **one group at a time**, completing its behavior checks before moving
 python3 scripts/macos-preferences.py --apply trackpad
 python3 scripts/macos-preferences.py --apply zoom
 python3 scripts/macos-preferences.py --apply mission-control
+python3 scripts/macos-preferences.py --apply dock
 python3 scripts/macos-preferences.py --apply keyboard
 ```
 

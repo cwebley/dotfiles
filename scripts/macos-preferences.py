@@ -16,7 +16,7 @@ import xml.etree.ElementTree as ET
 
 # Inspected on this release, NOT independently behavior-verified by this script.
 BASELINE_VERSION = '15.7.7'
-GROUPS = ('keyboard', 'trackpad', 'zoom', 'mission-control')
+GROUPS = ('keyboard', 'trackpad', 'zoom', 'mission-control', 'dock')
 GLOBAL = 'NSGlobalDomain'
 MAPPING_PREFIX = 'com.apple.keyboard.modifiermapping.'
 CAPS, LEFT_CONTROL, RIGHT_CONTROL = 0x700000039, 0x7000000E0, 0x7000000E4
@@ -142,6 +142,7 @@ def settings(backend, keyboard_key=None):
         setting('zoom', 'Scroll-to-zoom', 'com.apple.universalaccess', 'closeViewScrollWheelToggle', True),
         setting('zoom', 'Zoom modifier: Option', 'com.apple.universalaccess', 'closeViewScrollWheelModifiersInt', 524288),
         setting('mission-control', 'Group windows by application', 'com.apple.dock', 'expose-group-apps', True),
+        setting('dock', 'Automatically hide the Dock', 'com.apple.dock', 'autohide', True),
     ]
     notes = []
     try:

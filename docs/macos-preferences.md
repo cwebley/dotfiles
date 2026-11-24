@@ -24,6 +24,7 @@ For each group: preview, apply only that group, check every setting in System Se
 | `trackpad` | Tap-to-click | On in built-in, Bluetooth and current-host preferences |
 | `zoom` | Scroll-to-zoom | On, with Option as the modifier |
 | `mission-control` | Group windows by application | On, following the AeroSpace workaround |
+| `dock` | Automatically hide and show the Dock | On; leave existing reveal timing and icons unchanged |
 
 The faster `1`/`10` values are now the desired preferences. If they cause unwanted repeated letters, restore the original `2`/`15` values and log out/in when convenient. Desired values are defined by `KEY_REPEAT` and `INITIAL_KEY_REPEAT` in the script. Older script revisions still apply `2`/`15`; pull the updated revision before reapplying `keyboard` or `all`.
 
@@ -45,6 +46,7 @@ Apply one group at a time on the new Mac:
 python3 scripts/macos-preferences.py --apply trackpad
 python3 scripts/macos-preferences.py --apply zoom
 python3 scripts/macos-preferences.py --apply mission-control
+python3 scripts/macos-preferences.py --apply dock
 python3 scripts/macos-preferences.py --apply keyboard
 ```
 
@@ -167,6 +169,25 @@ New Mac result, macOS 27.2.1: the helper reported `STORED` for Group windows by 
 - [ ] In Desktop & Dock, confirm Group windows by application is enabled.
 - [ ] Open several windows from the same app and enter Mission Control. Confirm the grouping and AeroSpace workaround behave as expected.
 - [ ] If the preference is stored but not active, restart the Dock only when convenient with `killall Dock`, then test again. The helper never does this automatically.
+
+### Dock auto-hide
+
+The `dock` group sets only `com.apple.dock autohide=true`. It does not remove pinned apps or Trash, alter reveal timing, or restart the Dock. On a fresh default Dock this keeps normal reveal timing; any existing custom timing remains unchanged. Like other groups, `dock` is included in `--apply all`, but never runs as part of Stow setup.
+
+On the new Mac, preview first, then apply:
+
+```sh
+python3 scripts/macos-preferences.py --show
+python3 scripts/macos-preferences.py --apply dock --allow-untested
+```
+
+- [ ] Check for `STORED` or `NO CHANGE`; keep any printed backup path.
+- [ ] If needed, activate when convenient with `killall Dock`. It briefly restarts the Dock; the helper never does this automatically.
+- [ ] Confirm the Dock hides and reveals at its edge, with Trash still available and pinned icons unchanged.
+- [ ] Reapply and confirm no changes or new backup.
+- [ ] Confirm persistence after a convenient logout/restart.
+
+Implementation has fake-backend tests for apply, repeatability, restore from unset/false, and preservation of reveal delay, pinned apps and Mission Control grouping. New-Mac Dock behavior remains untested.
 
 ### Key repeat
 
