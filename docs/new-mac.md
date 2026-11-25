@@ -69,7 +69,7 @@ git config --global user.email 'YOUR COMMIT EMAIL'
 Continue your usual individual installs:
 
 ```sh
-brew install tmux neovim fnm
+brew install tmux neovim fnm tree-sitter-cli
 brew install --cask nikitabobko/tap/aerospace
 # Support the saved config and its checks:
 brew install fd lazygit python zsh-autosuggestions zsh-syntax-highlighting gitleaks
@@ -205,9 +205,9 @@ Use the same account and workspace as Pi, completing authentication yourself. Wi
 - Install Docker Desktop from https://www.docker.com/products/docker-desktop/ and sign in with Google. Review its license for the intended use.
 - Personal machines only, optional: `brew install --cask discord`, then sign in. Discord is excluded from the shared Brewfile and isn't wanted on the company Mac.
 - Install Adobe Illustrator through Adobe Creative Cloud and sign in.
-- Open Neovim and let LazyVim install its locked plugins. Language servers and language runtimes may need separate installs.
+- Install `tree-sitter-cli` through Homebrew, then open Neovim and let LazyVim install its locked plugins. The pinned Treesitter requires CLI 0.26.1 or newer. The `tree-sitter` library formula alone does not provide the CLI. If a first build failed because Mason could not find `tree-sitter-cli`, restart Neovim after installing the CLI and run `:Lazy build nvim-treesitter`, followed by `:TSUpdate`. Language servers and language runtimes may need separate installs.
 
-TrailMix is not installed here. Its Neovim integration and AeroSpace `alt-r` shortcut need a separate install at `~/.local/bin/trailmix`. Bun, Go, project checkouts and project-specific `.pi` settings are also separate.
+TrailMix is not installed here. Its optional Neovim plugin is skipped unless `~/src/trailmix` exists. The integration also expects the CLI at `~/.local/bin/trailmix`; AeroSpace's `alt-r` shortcut needs that CLI too. Bun, Go, project checkouts and project-specific `.pi` settings are also separate.
 
 ## 7. Comic Code and Nerd Fonts
 
