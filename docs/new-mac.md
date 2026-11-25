@@ -200,7 +200,7 @@ Use the same account and workspace as Pi, completing authentication yourself. Wi
 
 ## 6. Desktop apps and window management
 
-- Open AeroSpace and grant Accessibility permission in System Settings.
+- Open AeroSpace and grant Accessibility permission in System Settings. The shared config requires AeroSpace 0.20.0-Beta or newer and uses config-version 2 with explicit persistent workspaces. The old Mac has been upgraded to 0.21.3-Beta; the new Mac still needs post-pull acceptance. See [upgrade research and validation commands](aerospace-upgrade-research.md). A renewed signing certificate may require Accessibility approval again after an upgrade.
 - Enable Mission Control > Group windows by application in Desktop & Dock settings for your AeroSpace workflow. Exact settings names can vary by macOS version.
 - Install Docker Desktop from https://www.docker.com/products/docker-desktop/ and sign in with Google. Review its license for the intended use.
 - Personal machines only, optional: `brew install --cask discord`, then sign in. Discord is excluded from the shared Brewfile and isn't wanted on the company Mac.

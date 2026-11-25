@@ -1,3 +1,15 @@
+# Requires AeroSpace 0.20.0-Beta or newer.
+# https://nikitabobko.github.io/AeroSpace/guide#config-version-2
+config-version = 2
+
+# Preserve the empty workspaces previously inferred from our workspace bindings.
+# F/H/J/K/L/R/S are used for navigation, fullscreen or other shortcuts.
+persistent-workspaces = [
+    '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+    'A', 'B', 'C', 'D', 'E', 'G', 'I', 'M', 'N', 'O', 'P', 'Q',
+    'T', 'U', 'V', 'W', 'X', 'Y', 'Z',
+]
+
 # You can use it to add commands that run after login to macOS user session.
 # 'start-at-login' needs to be 'true' for 'after-login-command' to work
 # Available commands: https://nikitabobko.github.io/AeroSpace/commands
