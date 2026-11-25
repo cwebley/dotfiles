@@ -63,7 +63,18 @@ The temporary-home Stow test checks Ghostty linking and repeatability. On the ol
 
 ## Clipboard images in Pi
 
-Command+V invokes Ghostty's terminal clipboard action and is not the same as Pi's image-paste action. Pi 1.6.0 documents `app.clipboard.pasteImage` as Control+V on macOS. With the user's native modifier swap, physical Caps Lock+V sends Control+V. Test that in Pi with a screenshot on the clipboard. Do not globally remap Command+V to Control+V, since that would change paste behavior in other terminal applications. The user reported neither Command+V nor Control+V attached clipboard images in Ghostty, while image paste still worked through Alacritty attached to the same tmux session. Text paste with Control+V worked in Ghostty. Cause remains unresolved. `scripts/probe-terminal-key.py` captures a single keypress in a spare interactive shell pane, without reading the clipboard, to distinguish the input encodings. This diagnostic restores terminal mode and has a 10-second initial timeout. Both runs supplied by the user were in Ghostty and returned legacy Control+V byte `16`. This verifies shell input, not Pi's active keyboard-protocol behavior. The next diagnostic, `scripts/probe-pi-clipboard.mjs`, calls the managed Pi installation's own image reader from a spare shell pane. It prompts for a fresh clipboard screenshot and reports only format and byte count, without storing or printing image data. It requires the managed Pi installation layout and has not yet been behavior-tested.
+Command+V invokes Ghostty's terminal clipboard action and is not the same as Pi's image-paste action. Pi 1.6.0 documents `app.clipboard.pasteImage` as Control+V on macOS. With the user's native modifier swap, physical Caps Lock+V sends Control+V. The user confirmed screenshot paste with **Control+V works in Ghostty + tmux + Pi on the old Mac**. Pi inserts a temporary `pi-clipboard-*.png` path into the editor. The final failed live tests had used Command+V instead of Control+V. There is no demonstrated tmux Control+V failure remaining.
+
+Command+V with an image-only clipboard did not trigger Pi's input diagnostic. Use Control+V for screenshots, and keep Command+V for normal terminal text paste. Do not globally remap Command+V to Control+V, since that would change paste behavior in other terminal applications. No Ghostty or tmux configuration change was needed.
+
+Diagnostics retained for future troubleshooting:
+
+- `scripts/probe-terminal-key.py` checks raw shell input, not Pi's active keyboard protocol.
+- `scripts/probe-pi-clipboard.mjs` calls the managed Pi's image reader. The live Ghostty/tmux test found a PNG, 255998 bytes.
+- `scripts/probe-pi-terminal.mjs` uses Pi's real keyboard negotiation. The live tmux test recognized `ESC[118;5u` as Control+V.
+- `/clipboard-debug`, after `/reload`, watches input in the current Pi for up to 20 seconds and reports native image byte count on a paste shortcut. It does not consume input or log image/text contents. `/reload` clears its panel.
+
+These results do not establish new-Mac behavior.
 
 ## Image smoke test
 

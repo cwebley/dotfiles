@@ -1,8 +1,9 @@
 // Adapted from pi-config f82da563ab05d66729492d64c7ed4e96db3663f3 for Pi 1.1.0.
 // The upstream snapshot has no license declaration; this is private configuration.
+import type { ImageContent } from "@earendil-works/pi-ai";
 import type { ExtensionAPI, ExtensionContext, KeybindingsManager, Theme } from "@earendil-works/pi-coding-agent";
+import { QuestionImageEditor } from "./lib/question-image-paste.ts";
 import {
-	Editor,
 	type EditorTheme,
 	type Component,
 	type TUI,
@@ -47,6 +48,10 @@ interface OtherAnswer {
 }
 
 type AskAnswer = TextAnswer | OptionAnswer | OtherAnswer;
+interface QuestionSubmission {
+	answers: AskAnswer[];
+	images: ImageContent[];
+}
 type AskUserQuestionStatus = "answered" | "cancelled" | "unavailable";
 type AskUserQuestionMode = "text" | "single-select" | "multi-select";
 
@@ -187,7 +192,8 @@ function unavailableResult(question: string, mode: AskUserQuestionMode, message:
 	};
 }
 
-function buildResult(question: string, context: string | undefined, mode: AskUserQuestionMode, answers: AskAnswer[]) {
+function buildResult(question: string, context: string | undefined, mode: AskUserQuestionMode, submission: QuestionSubmission) {
+	const { answers, images } = submission;
 	let text: string;
 	if (mode === "text") {
 		const answer = answers[0];
@@ -199,7 +205,7 @@ function buildResult(question: string, context: string | undefined, mode: AskUse
 	}
 
 	return {
-		content: [{ type: "text" as const, text }],
+		content: [{ type: "text" as const, text }, ...images],
 		details: buildStructuredResult("answered", question, mode, answers, context),
 	};
 }
@@ -209,26 +215,29 @@ function buildResult(question: string, context: string | undefined, mode: AskUse
 async function customQuestion<T>(
 	ctx: ExtensionContext,
 	signal: AbortSignal | undefined,
-	factory: (tui: TUI, theme: Theme, kb: KeybindingsManager, done: (answer: T | null) => void) => Component,
+	factory: (tui: TUI, theme: Theme, kb: KeybindingsManager, done: (answer: T | null) => void, lifetime: AbortSignal) => Component,
 ): Promise<T | null> {
 	if (signal?.aborted) return null;
 	let onAbort: (() => void) | undefined;
+	const lifetime = new AbortController();
 	try {
 		return await ctx.ui.custom<T | null>((tui, theme, kb, done) => {
 			let completed = false;
 			const finish = (answer: T | null) => {
 				if (completed) return;
 				completed = true;
+				lifetime.abort();
 				if (onAbort) signal?.removeEventListener("abort", onAbort);
 				done(answer);
 			};
 			onAbort = () => finish(null);
 			signal?.addEventListener("abort", onAbort, { once: true });
-			const component = factory(tui, theme, kb, finish);
+			const component = factory(tui, theme, kb, finish, lifetime.signal);
 			if (signal?.aborted) finish(null);
 			return component;
 		});
 	} finally {
+		lifetime.abort();
 		if (onAbort) signal?.removeEventListener("abort", onAbort);
 	}
 }
@@ -238,10 +247,12 @@ async function askText(
 	question: string,
 	context: string | undefined,
 	signal: AbortSignal | undefined,
-): Promise<string | null> {
-	return customQuestion<string>(ctx, signal, (tui, theme, _kb, done) => {
-		const editor = new Editor(tui, createEditorTheme(theme));
-		editor.onSubmit = (value) => done(value.trim());
+): Promise<QuestionSubmission | null> {
+	return customQuestion<QuestionSubmission>(ctx, signal, (tui, theme, kb, done, lifetime) => {
+		const editor = new QuestionImageEditor(tui, createEditorTheme(theme), kb, () => tui.requestRender(), lifetime);
+		editor.onAnswer = ({ text, images }) => done({
+			answers: [{ type: "text", label: text, value: text }], images,
+		});
 		return {
 			get focused() { return editor.focused; },
 			set focused(value: boolean) { editor.focused = value; },
@@ -272,25 +283,25 @@ async function askSingleChoice(
 	context: string | undefined,
 	options: AskOption[],
 	signal: AbortSignal | undefined,
-): Promise<AskAnswer | null> {
+): Promise<QuestionSubmission | null> {
 	const otherLabel = getOtherLabel(options);
 	const allOptions: DisplayOption[] = [
 		...options.map((option, index) => ({ ...option, id: `option:${index}`, index: index + 1 })),
 		{ id: "other", label: otherLabel, value: "__other__", isOther: true },
 	];
 
-	return customQuestion<AskAnswer>(ctx, signal, (tui, theme, _kb, done) => {
+	return customQuestion<QuestionSubmission>(ctx, signal, (tui, theme, kb, done, lifetime) => {
 		let focused = false;
 		let optionIndex = 0;
 		let editMode = false;
 		let cachedLines: string[] | undefined;
 		let cachedWidth = -1;
-		const editor = new Editor(tui, createEditorTheme(theme));
+		const editor = new QuestionImageEditor(tui, createEditorTheme(theme), kb, refresh, lifetime);
+		editor.setEditing(false);
 
-		editor.onSubmit = (value) => {
-			const trimmed = value.trim();
-			if (!trimmed) return;
-			done({ type: "other", label: trimmed, value: trimmed });
+		editor.onAnswer = ({ text, images }) => {
+			if (!text && images.length === 0) return;
+			done({ answers: [{ type: "other", label: text, value: text }], images });
 		};
 
 		function refresh() {
@@ -303,6 +314,7 @@ async function askSingleChoice(
 			if (editMode) {
 				if (matchesKey(data, Key.escape)) {
 					editMode = false;
+					editor.setEditing(false);
 					editor.setText("");
 					refresh();
 					return;
@@ -326,15 +338,14 @@ async function askSingleChoice(
 				const selected = allOptions[optionIndex];
 				if (selected.isOther) {
 					editMode = true;
+					editor.setEditing(true);
 					editor.setText("");
 					refresh();
 					return;
 				}
 				done({
-					type: "option",
-					label: selected.label,
-					value: selected.value,
-					index: selected.index!,
+					answers: [{ type: "option", label: selected.label, value: selected.value, index: selected.index! }],
+					images: [],
 				});
 				return;
 			}
@@ -415,7 +426,7 @@ async function askMultiChoice(
 	context: string | undefined,
 	options: AskOption[],
 	signal: AbortSignal | undefined,
-): Promise<AskAnswer[] | null> {
+): Promise<QuestionSubmission | null> {
 	const otherLabel = getOtherLabel(options);
 	const choiceItems: DisplayOption[] = options.map((option, index) => ({
 		...option,
@@ -429,20 +440,23 @@ async function askMultiChoice(
 		submitItem,
 	];
 
-	return customQuestion<AskAnswer[]>(ctx, signal, (tui, theme, _kb, done) => {
+	return customQuestion<QuestionSubmission>(ctx, signal, (tui, theme, kb, done, lifetime) => {
 		let focused = false;
 		let optionIndex = 0;
 		let editMode = false;
 		let cachedLines: string[] | undefined;
 		let cachedWidth = -1;
 		const selected = new Map<string, AskAnswer>();
-		const editor = new Editor(tui, createEditorTheme(theme));
+		let otherImages: ImageContent[] = [];
+		const editor = new QuestionImageEditor(tui, createEditorTheme(theme), kb, refresh, lifetime);
+		editor.setEditing(false);
 
-		editor.onSubmit = (value) => {
-			const trimmed = value.trim();
-			if (!trimmed) return;
-			selected.set("other", { type: "other", label: trimmed, value: trimmed });
+		editor.onAnswer = ({ text, images }) => {
+			if (!text && images.length === 0) return;
+			selected.set("other", { type: "other", label: text, value: text });
+			otherImages = images;
 			editMode = false;
+			editor.setEditing(false);
 			refresh();
 		};
 
@@ -470,6 +484,7 @@ async function askMultiChoice(
 			if (editMode) {
 				if (matchesKey(data, Key.escape)) {
 					editMode = false;
+					editor.setEditing(false);
 					editor.setText(selected.get("other")?.label || "");
 					refresh();
 					return;
@@ -496,9 +511,11 @@ async function askMultiChoice(
 				if (current.isOther) {
 					if (selected.has("other")) {
 						selected.delete("other");
+						otherImages = [];
 						refresh();
 					} else {
 						editMode = true;
+						editor.setEditing(true);
 						editor.setText("");
 						refresh();
 					}
@@ -511,12 +528,13 @@ async function askMultiChoice(
 			if (matchesKey(data, Key.enter)) {
 				if (current.isSubmit) {
 					if (selected.size > 0) {
-						done(sortAnswers(Array.from(selected.values())));
+						done({ answers: sortAnswers(Array.from(selected.values())), images: otherImages });
 					}
 					return;
 				}
 				if (current.isOther) {
 					editMode = true;
+					editor.setEditing(true);
 					editor.setText(selected.get("other")?.label || "");
 					refresh();
 					return;
@@ -708,9 +726,7 @@ export default function askUserQuestion(pi: ExtensionAPI) {
 					if (answer === null) {
 						return cancelledResult(params.question, mode, context);
 					}
-					return buildResult(params.question, context, mode, [
-						{ type: "text", label: answer.trim(), value: answer.trim() },
-					]);
+					return buildResult(params.question, context, mode, answer);
 				}
 
 				if (mode === "single-select") {
@@ -718,7 +734,7 @@ export default function askUserQuestion(pi: ExtensionAPI) {
 					if (!answer) {
 						return cancelledResult(params.question, mode, context);
 					}
-					return buildResult(params.question, context, mode, [answer]);
+					return buildResult(params.question, context, mode, answer);
 				}
 
 				const answers = await askMultiChoice(ctx, params.question, context, options, signal);
